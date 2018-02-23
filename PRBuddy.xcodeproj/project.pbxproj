@@ -8,19 +8,25 @@
 
 /* Begin PBXBuildFile section */
 		854527CE204048CF00DFC643 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527CD204048CF00DFC643 /* AppDelegate.swift */; };
-		854527D0204048CF00DFC643 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527CF204048CF00DFC643 /* ViewController.swift */; };
+		854527D0204048CF00DFC643 /* SettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527CF204048CF00DFC643 /* SettingsViewController.swift */; };
 		854527D2204048CF00DFC643 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 854527D1204048CF00DFC643 /* Assets.xcassets */; };
 		854527D5204048CF00DFC643 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 854527D3204048CF00DFC643 /* Main.storyboard */; };
+		854527DE204085F800DFC643 /* GithubPolling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527DD204085F800DFC643 /* GithubPolling.swift */; };
+		854527E02040862900DFC643 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527DF2040862900DFC643 /* AppSettings.swift */; };
+		854527E3204098F700DFC643 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854527E2204098F700DFC643 /* Alamofire.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		854527CA204048CF00DFC643 /* PRBuddy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PRBuddy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		854527CD204048CF00DFC643 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		854527CF204048CF00DFC643 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		854527CF204048CF00DFC643 /* SettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsViewController.swift; sourceTree = "<group>"; };
 		854527D1204048CF00DFC643 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		854527D4204048CF00DFC643 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		854527D6204048CF00DFC643 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		854527D7204048CF00DFC643 /* PRBuddy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PRBuddy.entitlements; sourceTree = "<group>"; };
+		854527DD204085F800DFC643 /* GithubPolling.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubPolling.swift; sourceTree = "<group>"; };
+		854527DF2040862900DFC643 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
+		854527E2204098F700DFC643 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/Mac/Alamofire.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -28,6 +34,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				854527E3204098F700DFC643 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -39,6 +46,7 @@
 			children = (
 				854527CC204048CF00DFC643 /* PRBuddy */,
 				854527CB204048CF00DFC643 /* Products */,
+				854527E1204098F700DFC643 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -54,13 +62,23 @@
 			isa = PBXGroup;
 			children = (
 				854527CD204048CF00DFC643 /* AppDelegate.swift */,
-				854527CF204048CF00DFC643 /* ViewController.swift */,
+				854527DF2040862900DFC643 /* AppSettings.swift */,
 				854527D1204048CF00DFC643 /* Assets.xcassets */,
-				854527D3204048CF00DFC643 /* Main.storyboard */,
+				854527DD204085F800DFC643 /* GithubPolling.swift */,
 				854527D6204048CF00DFC643 /* Info.plist */,
+				854527D3204048CF00DFC643 /* Main.storyboard */,
 				854527D7204048CF00DFC643 /* PRBuddy.entitlements */,
+				854527CF204048CF00DFC643 /* SettingsViewController.swift */,
 			);
 			path = PRBuddy;
+			sourceTree = "<group>";
+		};
+		854527E1204098F700DFC643 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				854527E2204098F700DFC643 /* Alamofire.framework */,
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -73,6 +91,7 @@
 				854527C6204048CF00DFC643 /* Sources */,
 				854527C7204048CF00DFC643 /* Frameworks */,
 				854527C8204048CF00DFC643 /* Resources */,
+				854527E4204099A600DFC643 /* Cathage Copy Frameworks */,
 			);
 			buildRules = (
 			);
@@ -129,12 +148,33 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		854527E4204099A600DFC643 /* Cathage Copy Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/Carthage/Build/Mac/Alamofire.framework",
+			);
+			name = "Cathage Copy Frameworks";
+			outputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(FRAMEWORKS_FOLDER_PATH)/Alamofire.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/usr/local/bin/carthage copy-frameworks ";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		854527C6204048CF00DFC643 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				854527D0204048CF00DFC643 /* ViewController.swift in Sources */,
+				854527D0204048CF00DFC643 /* SettingsViewController.swift in Sources */,
+				854527DE204085F800DFC643 /* GithubPolling.swift in Sources */,
+				854527E02040862900DFC643 /* AppSettings.swift in Sources */,
 				854527CE204048CF00DFC643 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -267,6 +307,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = HKE973VLUW;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				INFOPLIST_FILE = PRBuddy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.duckduckgo.macos.PRBuddy;
@@ -283,6 +327,10 @@
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = HKE973VLUW;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"$(PROJECT_DIR)/Carthage/Build/Mac",
+				);
 				INFOPLIST_FILE = PRBuddy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.duckduckgo.macos.PRBuddy;
