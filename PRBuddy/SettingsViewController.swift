@@ -18,12 +18,16 @@ class SettingsViewController: NSViewController {
     
     @IBOutlet var validateButton: NSButton!
     @IBOutlet var validationProgress: NSProgressIndicator!
-    
+
+    @IBOutlet var reposOutlineView: NSOutlineView!
+    @IBOutlet var removeRepoButton: NSButton!
 
     let settings = AppSettings()
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.onSettingsChanged), name: AppSettings.Notifications.changed, object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.onReviewsRequestedChanged), name: GithubPolling.Notifications.reviewsRequested, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.onPollingStarted), name: GithubPolling.Notifications.pollingStarted, object: nil)
@@ -36,10 +40,16 @@ class SettingsViewController: NSViewController {
         noPRsField.stringValue = settings.noPRs
         
     }
-
+    
     @IBAction func validate(sender: Any) {
         print(#function)
         AppDelegate.instance.polling.pollNow()
+    }
+
+    @IBAction func removeRepo(sender: Any) {
+        print(#function)
+        settings.repos.remove(at: reposOutlineView.selectedRow)
+        removeRepoButton.isEnabled = false
     }
 
     @objc func onReviewsRequestedChanged() {
@@ -55,7 +65,45 @@ class SettingsViewController: NSViewController {
         validationProgress.stopAnimation(nil)
         validateButton.isEnabled = true
     }
+    
+    @objc func onSettingsChanged() {
+        reposOutlineView.reloadData()
+    }
 
+}
+
+extension SettingsViewController: NSOutlineViewDelegate {
+    
+    func outlineView(_ outlineView: NSOutlineView, numberOfChildrenOfItem item: Any?) -> Int {
+        return item == nil ? settings.repos.count : 0
+    }
+    
+    func outlineView(_ outlineView: NSOutlineView, child index: Int, ofItem item: Any?) -> Any {
+        return settings.repos[index]
+    }
+    
+    func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
+        print(#function, item)
+        return false
+    }
+    
+    func outlineViewSelectionDidChange(_ notification: Notification) {
+        removeRepoButton.isEnabled = reposOutlineView.selectedRow != -1
+    }
+    
+}
+
+extension SettingsViewController: NSOutlineViewDataSource {
+    
+    func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
+        print(#function, item)
+        let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DataCell"), owner: self) as? NSTableCellView
+        if let textField = view?.textField {
+            textField.stringValue = item as! String
+        }
+        return view
+    }
+    
 }
 
 extension SettingsViewController: NSTextFieldDelegate {

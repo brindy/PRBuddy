@@ -19,16 +19,26 @@ class GithubPolling {
 
     }
     
-    struct GithubPullRequest: Decodable {
+    struct GithubPullRequest: Decodable, Hashable, Equatable {
         
         struct User: Decodable {
             var login: String
             var avatar_url: String
         }
         
-        var id: String
+        var url: String
         var title: String
+        var state: String
         var user: User
+        var requested_reviewers: [User]
+
+        var hashValue: Int {
+            return url.hashValue
+        }
+
+        static func ==(lhs: GithubPolling.GithubPullRequest, rhs: GithubPolling.GithubPullRequest) -> Bool {
+            return lhs.hashValue == rhs.hashValue
+        }
         
     }
     
@@ -53,7 +63,12 @@ class GithubPolling {
     }
     
     var error: String?
-    var reviewsRequested: [GithubPullRequest]?
+
+    var allPullRequests = Set<GithubPullRequest>()
+    var reviewsRequested: [GithubPullRequest] {
+        let requests = allPullRequests.filter( { $0.requested_reviewers.contains(where: { $0.login == settings.username }) } )
+        return Array<GithubPullRequest>(requests)
+    }
     
     private let settings = AppSettings()
     private var timer:Timer?
@@ -82,10 +97,32 @@ class GithubPolling {
     
     func pollNow() {
         print(#function)
-        reviewsRequested = []
         error = nil
+        allPullRequests = []
         firePollingStarted()
         loadNotifications()
+        loadPullRequests()
+    }
+    
+    func loadPullRequests() {
+
+        for repo in settings.repos {
+            let url = URL(string: "https://api.github.com/repos/\(repo)/pulls")!
+            var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10.0)
+            request.addValue(settings.basicAuthorization(), forHTTPHeaderField: "Authorization")
+
+            Alamofire.request(request)
+                .validate(statusCode: 200..<300)
+                .responseData() { response in
+                    guard let data = response.data, response.error == nil else {
+                        self.error("Failed to retrieve notifications")
+                        return
+                    }
+                    self.parsePullRequestList(data)
+            }
+            
+        }
+        
     }
     
     func loadNotifications() {
@@ -113,7 +150,6 @@ class GithubPolling {
         }
         
         let reviewRequests = notifications.filter({ $0.reason == "review_requested" })
-        print(#function, reviewRequests)
         
         guard reviewRequests.count > 0 else {
             firePollingFinished()
@@ -146,30 +182,45 @@ class GithubPolling {
     func parsePullRequest(_ data: Data) {
         
         guard let pullRequest = try? JSONDecoder().decode(GithubPullRequest.self, from: data) else {
-            error("Failed to decode notifications")
+            error("Failed to decode pull request")
             return
         }
         
-        reviewsRequested?.append(pullRequest)
-        fireReviewsRequested()
+        if pullRequest.state != "closed" {
+            allPullRequests.insert(pullRequest)
+            fireReviewsRequested()
+        }
     }
-    
+
+    func parsePullRequestList(_ data: Data) {
+        
+        guard let list = try? JSONDecoder().decode(Array<GithubPullRequest>.self, from: data) else {
+            error("Failed to decode pull requestlist ")
+            return
+        }
+        
+        for pullRequest in list {
+            if pullRequest.state != "closed" {
+                print(#function, pullRequest.url)
+                allPullRequests.insert(pullRequest)
+                fireReviewsRequested()
+            }
+        }
+    }
+
     private func error(_ message: String) {
         error = message
     }
     
     private func fireReviewsRequested() {
-        print(#function)
         NotificationCenter.default.post(name: Notifications.reviewsRequested, object: nil)
     }
 
     private func firePollingStarted() {
-        print(#function)
         NotificationCenter.default.post(name: Notifications.pollingStarted, object: nil)
     }
 
     private func firePollingFinished() {
-        print(#function)
         NotificationCenter.default.post(name: Notifications.pollingFinished, object: nil)
     }
 

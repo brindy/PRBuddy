@@ -44,7 +44,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let menu = NSMenu()
         menu.addItem(NSMenuItem(title: "Show PR Buddy", action: #selector(self.showWindowInFront), keyEquivalent: ""))
         
-        item = NSStatusBar.system.statusItem(withLength: 30)
+        item = NSStatusBar.system.statusItem(withLength: 100)
         item.menu = menu
         updateStatus()
         
@@ -56,7 +56,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func updateStatus() {
-        item.button?.title = polling.reviewsRequested?.isEmpty ?? false ? settings.noPRs : settings.reviewRequested
+        item.button?.title = polling.reviewsRequested.isEmpty ? settings.noPRs : "\(settings.reviewRequested): \(polling.reviewsRequested.count)/\(polling.allPullRequests.count)"
     }
     
     @objc func showWindowInFront() {

@@ -25,6 +25,7 @@ class AppSettings {
         static let reviewRequested = "reviewRequested"
         static let noPRs = "noPRs"
         static let pollingTime = "pollingTime"
+        static let repos = "repos"
         
     }
     
@@ -82,6 +83,16 @@ class AppSettings {
         }
         set {
             userDefaults.set(newValue == "" ? nil : newValue, forKey: Keys.personalAccessToken)
+            fireChanged()
+        }
+    }
+    
+    var repos: [String] {
+        get {
+            return userDefaults.array(forKey: Keys.repos) as? [String] ?? []
+        }
+        set {
+            userDefaults.set(newValue, forKey: Keys.repos)
             fireChanged()
         }
     }
