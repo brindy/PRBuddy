@@ -3,7 +3,7 @@
 //  PRBuddy
 //
 //  Created by Chris Brind on 23/02/2018.
-//  Copyright © 2018 DuckDuckGo, Inc. All rights reserved.
+//  Copyright © 2018 Chris Brind. All rights reserved.
 //
 
 import Foundation
@@ -57,21 +57,7 @@ class GithubPolling {
         }
         
     }
-    
-    struct GithubNotification: Decodable {
-        
-        struct Subject: Decodable {
-            var title: String
-            var url: String
-            var type: String
-        }
-        
-        var id: String
-        var reason: String
-        var subject: Subject
-        
-    }
-    
+
     var error: String?
 
     var allPullRequests = Set<GithubPullRequest>()
@@ -110,11 +96,15 @@ class GithubPolling {
         error = nil
         allPullRequests = []
         firePollingStarted()
-        loadNotifications()
         loadPullRequests()
     }
     
     func loadPullRequests() {
+        
+        guard !settings.repos.isEmpty else {
+            firePollingFinished()
+            return
+        }
 
         for repo in settings.repos {
             let url = URL(string: "https://api.github.com/repos/\(repo)/pulls")!
@@ -135,73 +125,6 @@ class GithubPolling {
         
     }
     
-    func loadNotifications() {
-        let url = URL(string: "https://api.github.com/notifications")!
-        var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10.0)
-        request.addValue(settings.basicAuthorization(), forHTTPHeaderField: "Authorization")
-        
-        Alamofire.request(request)
-            .validate(statusCode: 200..<300)
-            .responseData() { response in
-                guard let data = response.data, response.error == nil else {
-                    self.error("Failed to retrieve notifications")
-                    return
-                }
-                self.parseNotifications(data)
-            }
-        
-    }
-    
-    func parseNotifications(_ data: Data) {
-        
-        guard let notifications = try? JSONDecoder().decode(Array<GithubNotification>.self, from: data) else {
-            self.error("Failed to decode notifications")
-            return
-        }
-        
-        let reviewRequests = notifications.filter({ $0.reason == "review_requested" })
-        
-        guard reviewRequests.count > 0 else {
-            firePollingFinished()
-            return
-        }
-        
-        let semaphore = DispatchSemaphore(value: reviewRequests.count)
-        for notification in reviewRequests {
-            let url = URL(string: notification.subject.url)!
-            var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10.0)
-            request.addValue(settings.basicAuthorization(), forHTTPHeaderField: "Authorization")
-
-            Alamofire.request(request)
-                .validate(statusCode: 200..<300)
-                .responseData() { response in
-                    semaphore.signal()
-                    
-                    guard let data = response.data, response.error == nil else {
-                        self.error("Failed to retrieve pull request")
-                        return
-                    }
-                    self.parsePullRequest(data)
-            }
-        }
-
-        semaphore.wait()
-        firePollingFinished()
-    }
-    
-    func parsePullRequest(_ data: Data) {
-        
-        guard let pullRequest = try? JSONDecoder().decode(GithubPullRequest.self, from: data) else {
-            error("Failed to decode pull request")
-            return
-        }
-        
-        if pullRequest.state != "closed" {
-            allPullRequests.insert(pullRequest)
-            fireReviewsRequested()
-        }
-    }
-
     func parsePullRequestList(_ data: Data) {
         
         guard let list = try? JSONDecoder().decode(Array<GithubPullRequest>.self, from: data) else {
@@ -215,10 +138,12 @@ class GithubPolling {
                 fireReviewsRequested()
             }
         }
+
+        firePollingFinished()
     }
 
     private func error(_ message: String) {
-        print("ERROR: ", error)
+        print("ERROR: ", error as Any)
         error = message
     }
     

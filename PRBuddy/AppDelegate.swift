@@ -3,7 +3,7 @@
 //  PRBuddy
 //
 //  Created by Chris Brind on 23/02/2018.
-//  Copyright © 2018 DuckDuckGo, Inc. All rights reserved.
+//  Copyright © 2018 Chris Brind. All rights reserved.
 //
 
 import Cocoa
@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         buildMenu()
         updateStatus()
         
-        if settings.username == nil || settings.personalAccessToken == nil {
+        if settings.username == nil || settings.personalAccessToken == nil || settings.repos.isEmpty {
             showWindowInFront()
         } else {
             polling.pollNow()

@@ -3,7 +3,7 @@
 //  PRBuddy
 //
 //  Created by Chris Brind on 24/02/2018.
-//  Copyright © 2018 DuckDuckGo, Inc. All rights reserved.
+//  Copyright © 2018 Chris Brind. All rights reserved.
 //
 
 import Cocoa
@@ -18,6 +18,7 @@ class AddRepoViewController: NSViewController {
     @IBAction func addRepo(sender: Any) {
         print(#function)
         settings.repos.append(repoField.stringValue)
+        AppDelegate.instance.polling.pollNow()
         dismiss(self)
     }
     

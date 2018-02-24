@@ -310,14 +310,14 @@
 				CODE_SIGN_ENTITLEMENTS = PRBuddy/PRBuddy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = HKE973VLUW;
+				DEVELOPMENT_TEAM = EVNNUL2F2G;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				INFOPLIST_FILE = PRBuddy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.duckduckgo.macos.PRBuddy;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.org.brindy.macos.PRBuddy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 			};
@@ -330,14 +330,14 @@
 				CODE_SIGN_ENTITLEMENTS = PRBuddy/PRBuddy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = HKE973VLUW;
+				DEVELOPMENT_TEAM = EVNNUL2F2G;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
 				);
 				INFOPLIST_FILE = PRBuddy/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = com.duckduckgo.macos.PRBuddy;
+				PRODUCT_BUNDLE_IDENTIFIER = uk.org.brindy.macos.PRBuddy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 4.0;
 			};

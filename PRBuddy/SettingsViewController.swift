@@ -3,7 +3,7 @@
 //  PRBuddy
 //
 //  Created by Chris Brind on 23/02/2018.
-//  Copyright © 2018 DuckDuckGo, Inc. All rights reserved.
+//  Copyright © 2018 Chris Brind. All rights reserved.
 //
 
 import Cocoa
@@ -50,6 +50,7 @@ class SettingsViewController: NSViewController {
         print(#function)
         settings.repos.remove(at: reposOutlineView.selectedRow)
         removeRepoButton.isEnabled = false
+        AppDelegate.instance.polling.pollNow()
     }
 
     @IBAction func openPersonalAccessTokenPage(sender: Any) {

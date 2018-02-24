@@ -3,7 +3,7 @@
 //  PRBuddy
 //
 //  Created by Chris Brind on 23/02/2018.
-//  Copyright © 2018 DuckDuckGo, Inc. All rights reserved.
+//  Copyright © 2018 Chris Brind. All rights reserved.
 //
 
 import Foundation
@@ -92,7 +92,9 @@ class AppSettings {
             return userDefaults.array(forKey: Keys.repos) as? [String] ?? []
         }
         set {
-            userDefaults.set(newValue, forKey: Keys.repos)
+            let set = Set<String>(newValue)
+            let array = Array<String>(set)
+            userDefaults.set(array, forKey: Keys.repos)
             fireChanged()
         }
     }
