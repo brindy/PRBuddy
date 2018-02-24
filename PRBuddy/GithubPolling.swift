@@ -201,7 +201,6 @@ class GithubPolling {
         
         for pullRequest in list {
             if pullRequest.state != "closed" {
-                print(#function, pullRequest.url)
                 allPullRequests.insert(pullRequest)
                 fireReviewsRequested()
             }

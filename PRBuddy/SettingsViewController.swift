@@ -52,6 +52,11 @@ class SettingsViewController: NSViewController {
         removeRepoButton.isEnabled = false
     }
 
+    @IBAction func openPersonalAccessTokenPage(sender: Any) {
+        print(#function)
+        NSWorkspace.shared.open(URL(string: "https://github.com/settings/tokens")!)
+    }
+    
     @objc func onReviewsRequestedChanged() {
         AppDelegate.instance.updateStatus()
     }
@@ -69,7 +74,7 @@ class SettingsViewController: NSViewController {
     @objc func onSettingsChanged() {
         reposOutlineView.reloadData()
     }
-
+    
 }
 
 extension SettingsViewController: NSOutlineViewDelegate {

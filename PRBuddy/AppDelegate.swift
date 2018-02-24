@@ -56,7 +56,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func updateStatus() {
-        item.button?.title = polling.reviewsRequested.isEmpty ? settings.noPRs : "\(settings.reviewRequested): \(polling.reviewsRequested.count)/\(polling.allPullRequests.count)"
+        
+        if polling.reviewsRequested.isEmpty {
+            item.button?.title = "\(settings.noPRs) (\(polling.allPullRequests.count))"
+        } else {
+            item.button?.title = "\(settings.reviewRequested): \(polling.reviewsRequested.count)/\(polling.allPullRequests.count)"
+        }
+        
     }
     
     @objc func showWindowInFront() {
