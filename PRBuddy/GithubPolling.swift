@@ -26,12 +26,28 @@ class GithubPolling {
             var avatar_url: String
         }
         
+        struct Commit: Decodable {
+            
+            var label: String
+            var ref: String
+            var sha: String
+            
+        }
+        
         var url: String
+        var html_url: String
         var title: String
         var state: String
         var user: User
         var requested_reviewers: [User]
 
+        var head: Commit
+        var base: Commit
+        
+        var repo: String {
+            return url.components(separatedBy: "/")[4...5].joined(separator: "/")
+        }
+        
         var hashValue: Int {
             return url.hashValue
         }
@@ -50,15 +66,9 @@ class GithubPolling {
             var type: String
         }
         
-        struct Repository: Decodable {
-            var name: String
-            var full_name: String
-        }
-        
         var id: String
         var reason: String
         var subject: Subject
-        var repository: Repository
         
     }
     
@@ -208,6 +218,7 @@ class GithubPolling {
     }
 
     private func error(_ message: String) {
+        print("ERROR: ", error)
         error = message
     }
     

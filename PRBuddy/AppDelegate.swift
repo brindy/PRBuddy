@@ -8,25 +8,6 @@
 
 import Cocoa
 
-/*
- 
- to get pull requests:
- 
- result = GET https://api.github.com/notifications
- result[].reason = "review_requested"
- 
- Pull URL = result[].subject.url
- Pull Title = result[].subject.title
- 
- to get pull assignee:
- 
- pull = GET result.subject.url (e.g. https://api.github.com/repos/duckduckgo/Android/pulls/197)
- 
- Assignee name = result.assignee.login
- Assignee avatar = result.assignee.avatar_url
- 
- */
-
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
 
@@ -41,11 +22,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
         windowController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Main")) as? NSWindowController
 
-        let menu = NSMenu()
-        menu.addItem(NSMenuItem(title: "Show PR Buddy", action: #selector(self.showWindowInFront), keyEquivalent: ""))
-        
+
         item = NSStatusBar.system.statusItem(withLength: 100)
-        item.menu = menu
+        buildMenu()
         updateStatus()
         
         if settings.username == nil || settings.personalAccessToken == nil {
@@ -57,6 +36,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func updateStatus() {
         
+        buildMenu()
         if polling.reviewsRequested.isEmpty {
             item.button?.title = "\(settings.noPRs) (\(polling.allPullRequests.count))"
         } else {
@@ -65,12 +45,60 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
     }
     
+    func buildMenu() {
+        let menu = NSMenu()
+        if polling.allPullRequests.count > 0 {
+            
+            let requested = polling.allPullRequests.filter({ $0.requested_reviewers.contains(where: { $0.login == settings.username }) })
+            let others = polling.allPullRequests.subtracting(requested)
+            
+            for pr in requested {
+                menu.addItem(createPRMenuItem(pr: pr, icon: "\(settings.reviewRequested) "))
+            }
+
+            for pr in others {
+                 menu.addItem(createPRMenuItem(pr: pr, icon: ""))
+            }
+
+            menu.addItem(NSMenuItem.separator())
+        }
+        
+        menu.addItem(NSMenuItem(title: "Settings", action: #selector(self.showWindowInFront), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "Quit", action: #selector(self.quit), keyEquivalent: ""))
+        item.menu = menu
+    }
+    
     @objc func showWindowInFront() {
         windowController.showWindow(nil)
         windowController.window?.makeKeyAndOrderFront(nil)
         windowController.window?.orderFrontRegardless()
     }
 
+    @objc func quit() {
+        NSApp.terminate(self)
+    }
+    
+    @objc func openPullRequestURL(sender: PullRequestMenuItem) {
+        print(#function, sender)
+        NSWorkspace.shared.open(URL(string: sender.pr.html_url)!)
+    }
+
+    @objc func checkoutPullRequest(sender: PullRequestMenuItem) {
+        print(#function, sender)
+        // TODO checkout base
+        // TODO merge head
+        // TODO open terminal at that location
+    }
+
+    private func createPRMenuItem(pr: GithubPolling.GithubPullRequest, icon: String) -> PullRequestMenuItem {
+        let title = "\(icon)\(pr.repo): \(pr.title)"
+        let menuItem = PullRequestMenuItem(title: title, action: #selector(self.openPullRequestURL), pr: pr)
+        menuItem.submenu = NSMenu(title: "Actions")
+        menuItem.submenu?.addItem(PullRequestMenuItem(title: "Checkout...", action: #selector(self.checkoutPullRequest), pr: pr))
+        return menuItem
+    }
+    
     class var instance: AppDelegate {
         get {
             return NSApp.delegate as! AppDelegate
@@ -78,3 +106,22 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
 }
+
+class PullRequestMenuItem: NSMenuItem {
+    
+    var pr: GithubPolling.GithubPullRequest!
+    
+    init(title string: String, action selector: Selector?, pr: GithubPolling.GithubPullRequest) {
+        self.pr = pr
+        super.init(title: string, action: selector, keyEquivalent: "")
+    }
+    
+    required init(coder decoder: NSCoder) {
+        super.init(coder: decoder)
+    }
+    
+}
+
+
+
+
