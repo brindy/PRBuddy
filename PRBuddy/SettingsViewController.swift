@@ -22,6 +22,8 @@ class SettingsViewController: NSViewController {
     @IBOutlet var reposOutlineView: NSOutlineView!
     @IBOutlet var removeRepoButton: NSButton!
 
+    @IBOutlet var validationGoodLabel: NSTextField!
+    
     let settings = AppSettings()
 
     override func viewDidLoad() {
@@ -43,7 +45,9 @@ class SettingsViewController: NSViewController {
     
     @IBAction func validate(sender: Any) {
         print(#function)
+        validationGoodLabel.stringValue = ""
         AppDelegate.instance.polling.pollNow()
+        AppDelegate.instance.updateStatus()
     }
 
     @IBAction func removeRepo(sender: Any) {
@@ -70,6 +74,21 @@ class SettingsViewController: NSViewController {
     @objc func onPollingFinished() {
         validationProgress.stopAnimation(nil)
         validateButton.isEnabled = true
+        
+        if let error = AppDelegate.instance.polling.error,
+            let window = AppDelegate.instance.windowController.window {
+            
+            if !window.isVisible {
+                AppDelegate.instance.showWindowInFront()
+            }
+            let alert = NSAlert()
+            alert.informativeText = "\(error)\nCheck your username and personal access token, then try again."
+            alert.beginSheetModal(for: window)
+            validationGoodLabel.stringValue = "☹️"
+        } else {
+            validationGoodLabel.stringValue = "🙂"
+        }
+        
     }
     
     @objc func onSettingsChanged() {
@@ -121,6 +140,7 @@ extension SettingsViewController: NSTextFieldDelegate {
         settings.noPRs = noPRsField.stringValue
         settings.reviewRequested = reviewRequestedField.stringValue
         settings.pollingTime = pollingMinutesField.integerValue
+        validationGoodLabel.stringValue = ""
         
     }
     

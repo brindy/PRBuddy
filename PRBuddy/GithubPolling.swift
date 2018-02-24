@@ -96,7 +96,10 @@ class GithubPolling {
         error = nil
         allPullRequests = []
         firePollingStarted()
-        loadPullRequests()
+        
+        DispatchQueue.global(qos: .background).async {
+            self.loadPullRequests()
+        }
     }
     
     func loadPullRequests() {
@@ -115,11 +118,13 @@ class GithubPolling {
                 .validate(statusCode: 200..<300)
                 .responseData() { response in
                     guard let data = response.data, response.error == nil else {
-                        self.error("Failed to retrieve notifications")
+                        self.error("Failed to retrieve pull requests for \(repo).")
                         return
                     }
                     self.parsePullRequestList(data)
             }
+            
+            guard error == nil else { return }
             
         }
         
@@ -128,7 +133,7 @@ class GithubPolling {
     func parsePullRequestList(_ data: Data) {
         
         guard let list = try? JSONDecoder().decode(Array<GithubPullRequest>.self, from: data) else {
-            error("Failed to decode pull requestlist ")
+            error("Failed to parse pull request list JSON.")
             return
         }
         
@@ -143,20 +148,28 @@ class GithubPolling {
     }
 
     private func error(_ message: String) {
+        guard error == nil else { return }
         print("ERROR: ", error as Any)
         error = message
+        firePollingFinished()
     }
     
     private func fireReviewsRequested() {
-        NotificationCenter.default.post(name: Notifications.reviewsRequested, object: nil)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: Notifications.reviewsRequested, object: nil)
+        }
     }
 
     private func firePollingStarted() {
-        NotificationCenter.default.post(name: Notifications.pollingStarted, object: nil)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: Notifications.pollingStarted, object: nil)
+        }
     }
 
     private func firePollingFinished() {
-        NotificationCenter.default.post(name: Notifications.pollingFinished, object: nil)
+        DispatchQueue.main.async {
+            NotificationCenter.default.post(name: Notifications.pollingFinished, object: nil)
+        }
     }
 
 }

@@ -47,19 +47,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     
     func buildMenu() {
         let menu = NSMenu()
+
+        menu.addItem(NSMenuItem(title: "About PRBuddy", action: #selector(self.aboutPRBuddy), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
+
         if polling.allPullRequests.count > 0 {
-            
             let requested = polling.allPullRequests.filter({ $0.requested_reviewers.contains(where: { $0.login == settings.username }) })
             let others = polling.allPullRequests.subtracting(requested)
-            
             for pr in requested {
-                menu.addItem(createPRMenuItem(pr: pr, icon: "\(settings.reviewRequested) "))
+                menu.addItem(createPRMenuItem(pr: pr, requested: true))
             }
-
             for pr in others {
-                 menu.addItem(createPRMenuItem(pr: pr, icon: ""))
+                 menu.addItem(createPRMenuItem(pr: pr, requested: false))
             }
-
             menu.addItem(NSMenuItem.separator())
         }
         
@@ -91,11 +91,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // TODO open terminal at that location
     }
 
-    private func createPRMenuItem(pr: GithubPolling.GithubPullRequest, icon: String) -> PullRequestMenuItem {
-        let title = "\(icon)\(pr.repo): \(pr.title)"
+    @objc func ignorePullRequest(sender: PullRequestMenuItem) {
+        print(#function, sender)
+        // TODO keep track of requests we're not interested in
+    }
+
+    @objc func aboutPRBuddy() {
+        print(#function)
+    }
+
+    private func createPRMenuItem(pr: GithubPolling.GithubPullRequest, requested: Bool) -> PullRequestMenuItem {
+        let title = "\(requested ? settings.reviewRequested : "")\(pr.repo): \(pr.title)"
         let menuItem = PullRequestMenuItem(title: title, action: #selector(self.openPullRequestURL), pr: pr)
         menuItem.submenu = NSMenu(title: "Actions")
         menuItem.submenu?.addItem(PullRequestMenuItem(title: "Checkout...", action: #selector(self.checkoutPullRequest), pr: pr))
+        
+        if requested {
+            menuItem.submenu?.addItem(PullRequestMenuItem(title: "Ignore", action: #selector(self.ignorePullRequest), pr: pr))
+        }
+        
         return menuItem
     }
     
