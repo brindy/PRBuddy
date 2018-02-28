@@ -35,29 +35,31 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     func updateStatus() {
-        
         buildMenu()
-        if polling.reviewsRequested.isEmpty {
-            item.button?.title = "\(settings.noPRs) (\(polling.allPullRequests.count))"
-        } else {
+        resetStatus()
+        if !polling.reviewsRequested.isEmpty {
             item.button?.title = "\(settings.reviewRequested): \(polling.reviewsRequested.count)/\(polling.allPullRequests.count)"
         }
-        
+    }
+
+    func resetStatus() {
+        item.button?.title = "\(settings.noPRs) (\(polling.allPullRequests.count))"
     }
     
     func buildMenu() {
         let menu = NSMenu()
 
         menu.addItem(NSMenuItem(title: "About PRBuddy", action: #selector(self.aboutPRBuddy), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Check now", action: #selector(self.checkNow), keyEquivalent: ""))
         menu.addItem(NSMenuItem.separator())
 
         if polling.allPullRequests.count > 0 {
             let requested = polling.allPullRequests.filter({ $0.requested_reviewers.contains(where: { $0.login == settings.username }) })
             let others = polling.allPullRequests.subtracting(requested)
-            for pr in requested {
+            for pr in requested.sorted(by: { $0.repo.lowercased() < $1.repo.lowercased() }) {
                 menu.addItem(createPRMenuItem(pr: pr, requested: true))
             }
-            for pr in others {
+            for pr in others.sorted(by: { $0.repo.lowercased() < $1.repo.lowercased() }) {
                  menu.addItem(createPRMenuItem(pr: pr, requested: false))
             }
             menu.addItem(NSMenuItem.separator())
@@ -83,6 +85,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         print(#function, sender)
         NSWorkspace.shared.open(URL(string: sender.pr.html_url)!)
     }
+    
+    @objc func checkNow(sender: Any) {
+        print(#function, sender)
+        resetStatus()
+        polling.stop()
+        polling.start()
+        polling.pollNow()
+    }
 
     @objc func checkoutPullRequest(sender: PullRequestMenuItem) {
         print(#function, sender)
@@ -97,7 +107,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func aboutPRBuddy() {
-        print(#function)
+        showWindowInFront()
+        guard let controller = windowController.contentViewController as? SettingsViewController else { return }
+        controller.showAbout()
     }
 
     private func createPRMenuItem(pr: GithubPolling.GithubPullRequest, requested: Bool) -> PullRequestMenuItem {

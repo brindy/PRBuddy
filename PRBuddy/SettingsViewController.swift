@@ -81,9 +81,13 @@ class SettingsViewController: NSViewController {
             if !window.isVisible {
                 AppDelegate.instance.showWindowInFront()
             }
-            let alert = NSAlert()
-            alert.informativeText = "\(error)\nCheck your username and personal access token, then try again."
-            alert.beginSheetModal(for: window)
+            
+            if presentedViewControllers?.isEmpty ?? true {
+                let alert = NSAlert()
+                alert.informativeText = "\(error)\nCheck your username and personal access token, then try again."
+                alert.beginSheetModal(for: window)
+            }
+            
             validationGoodLabel.stringValue = "☹️"
         } else {
             validationGoodLabel.stringValue = "🙂"
@@ -93,6 +97,11 @@ class SettingsViewController: NSViewController {
     
     @objc func onSettingsChanged() {
         reposOutlineView.reloadData()
+    }
+    
+    func showAbout() {
+        guard presentedViewControllers?.isEmpty ?? true else { return }
+        performSegue(withIdentifier: NSStoryboardSegue.Identifier("about"), sender: self)
     }
     
 }
@@ -108,7 +117,6 @@ extension SettingsViewController: NSOutlineViewDelegate {
     }
     
     func outlineView(_ outlineView: NSOutlineView, isItemExpandable item: Any) -> Bool {
-        print(#function, item)
         return false
     }
     
@@ -121,7 +129,6 @@ extension SettingsViewController: NSOutlineViewDelegate {
 extension SettingsViewController: NSOutlineViewDataSource {
     
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
-        print(#function, item)
         let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DataCell"), owner: self) as? NSTableCellView
         if let textField = view?.textField {
             textField.stringValue = item as! String

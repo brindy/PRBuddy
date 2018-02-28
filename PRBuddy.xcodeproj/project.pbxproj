@@ -15,6 +15,7 @@
 		854527E02040862900DFC643 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527DF2040862900DFC643 /* AppSettings.swift */; };
 		854527E3204098F700DFC643 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854527E2204098F700DFC643 /* Alamofire.framework */; };
 		854527E62040E3B600DFC643 /* AddRepoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527E52040E3B600DFC643 /* AddRepoViewController.swift */; };
+		85B9B90F204720E10086E994 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B9B90E204720E10086E994 /* AboutViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -29,6 +30,7 @@
 		854527DF2040862900DFC643 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		854527E2204098F700DFC643 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/Mac/Alamofire.framework; sourceTree = "<group>"; };
 		854527E52040E3B600DFC643 /* AddRepoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRepoViewController.swift; sourceTree = "<group>"; };
+		85B9B90E204720E10086E994 /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -72,6 +74,7 @@
 				854527D3204048CF00DFC643 /* Main.storyboard */,
 				854527D7204048CF00DFC643 /* PRBuddy.entitlements */,
 				854527CF204048CF00DFC643 /* SettingsViewController.swift */,
+				85B9B90E204720E10086E994 /* AboutViewController.swift */,
 			);
 			path = PRBuddy;
 			sourceTree = "<group>";
@@ -175,6 +178,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				85B9B90F204720E10086E994 /* AboutViewController.swift in Sources */,
 				854527E62040E3B600DFC643 /* AddRepoViewController.swift in Sources */,
 				854527D0204048CF00DFC643 /* SettingsViewController.swift in Sources */,
 				854527DE204085F800DFC643 /* GithubPolling.swift in Sources */,
