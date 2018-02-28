@@ -15,6 +15,7 @@ class SettingsViewController: NSViewController {
     @IBOutlet var pollingMinutesField: NSTextField!
     @IBOutlet var reviewRequestedField: NSTextField!
     @IBOutlet var noPRsField: NSTextField!
+    @IBOutlet var checkoutDirLabel: NSTextField!
     
     @IBOutlet var validateButton: NSButton!
     @IBOutlet var validationProgress: NSProgressIndicator!
@@ -35,12 +36,7 @@ class SettingsViewController: NSViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(self.onPollingStarted), name: GithubPolling.Notifications.pollingStarted, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.onPollingFinished), name: GithubPolling.Notifications.pollingFinished, object: nil)
 
-        usernameField.stringValue = settings.username ?? ""
-        personalAccessTokenField.stringValue = settings.personalAccessToken ?? ""
-        pollingMinutesField.integerValue = settings.pollingTime
-        reviewRequestedField.stringValue = settings.reviewRequested
-        noPRsField.stringValue = settings.noPRs
-        
+        updateSettingsViews()
     }
     
     @IBAction func validate(sender: Any) {
@@ -60,6 +56,30 @@ class SettingsViewController: NSViewController {
     @IBAction func openPersonalAccessTokenPage(sender: Any) {
         print(#function)
         NSWorkspace.shared.open(URL(string: "https://github.com/settings/tokens")!)
+    }
+    
+    @IBAction func selectCheckoutFolder(sender: Any) {
+        print(#function)
+        
+        let openPanel = NSOpenPanel()
+        openPanel.allowsMultipleSelection = false
+        openPanel.canChooseDirectories = true
+        openPanel.canCreateDirectories = true
+        openPanel.canChooseFiles = false
+        openPanel.begin { result in
+            guard result == NSApplication.ModalResponse.OK else { return }
+            guard let url = openPanel.url else { return }
+            self.settings.checkoutDir = url
+        }
+        
+    }
+    
+    @IBAction func openCheckoutFolder(sender: Any) {
+        guard let url = settings.checkoutDir else { return }
+        if url.startAccessingSecurityScopedResource() {
+            NSWorkspace.shared.open(url)
+            url.stopAccessingSecurityScopedResource()
+        }
     }
     
     @objc func onReviewsRequestedChanged() {
@@ -96,12 +116,22 @@ class SettingsViewController: NSViewController {
     }
     
     @objc func onSettingsChanged() {
-        reposOutlineView.reloadData()
+        updateSettingsViews()
     }
     
     func showAbout() {
         guard presentedViewControllers?.isEmpty ?? true else { return }
         performSegue(withIdentifier: NSStoryboardSegue.Identifier("about"), sender: self)
+    }
+    
+    private func updateSettingsViews() {
+        reposOutlineView.reloadData()
+        usernameField.stringValue = settings.username ?? ""
+        personalAccessTokenField.stringValue = settings.personalAccessToken ?? ""
+        pollingMinutesField.integerValue = settings.pollingTime
+        reviewRequestedField.stringValue = settings.reviewRequested
+        noPRsField.stringValue = settings.noPRs
+        checkoutDirLabel.stringValue = String(settings.checkoutDir?.absoluteString.dropFirst("file://".count) ?? "<none selected>")
     }
     
 }

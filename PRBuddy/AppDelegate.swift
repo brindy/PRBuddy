@@ -27,7 +27,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         buildMenu()
         updateStatus()
         
-        if settings.username == nil || settings.personalAccessToken == nil || settings.repos.isEmpty {
+        if settings.username == nil || settings.personalAccessToken == nil || settings.repos.isEmpty || settings.checkoutDir == nil {
             showWindowInFront()
         } else {
             polling.pollNow()
@@ -56,10 +56,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         if polling.allPullRequests.count > 0 {
             let requested = polling.allPullRequests.filter({ $0.requested_reviewers.contains(where: { $0.login == settings.username }) })
             let others = polling.allPullRequests.subtracting(requested)
-            for pr in requested.sorted(by: { $0.repo.lowercased() < $1.repo.lowercased() }) {
+            for pr in requested.sorted(by: { $0.repoName < $1.repoName }) {
                 menu.addItem(createPRMenuItem(pr: pr, requested: true))
             }
-            for pr in others.sorted(by: { $0.repo.lowercased() < $1.repo.lowercased() }) {
+            for pr in others.sorted(by: { $0.repoName < $1.repoName }) {
                  menu.addItem(createPRMenuItem(pr: pr, requested: false))
             }
             menu.addItem(NSMenuItem.separator())
@@ -96,6 +96,19 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
     @objc func checkoutPullRequest(sender: PullRequestMenuItem) {
         print(#function, sender)
+        
+        let tmpDir = settings.checkoutDir!
+        let tmpCheckoutDir = UUID.init().uuidString
+        let dir = NSURL.fileURL(withPathComponents: [tmpDir.absoluteString, tmpCheckoutDir])!
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true, attributes: [:])
+        
+        let process = Process()
+        process.launchPath = "/usr/bin/git"
+        process.arguments = ["-C", dir.absoluteString, "clone", sender.pr.base.repo.ssh_url]
+        try? process.run()
+
+        NSWorkspace.shared.openFile(dir.absoluteString)
+
         // TODO checkout base
         // TODO merge head
         // TODO open terminal at that location
@@ -113,7 +126,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     private func createPRMenuItem(pr: GithubPolling.GithubPullRequest, requested: Bool) -> PullRequestMenuItem {
-        let title = "\(requested ? settings.reviewRequested : "")\(pr.repo): \(pr.title)"
+        let title = "\(requested ? settings.reviewRequested : "")\(pr.repoName): \(pr.title)"
         let menuItem = PullRequestMenuItem(title: title, action: #selector(self.openPullRequestURL), pr: pr)
         menuItem.submenu = NSMenu(title: "Actions")
         menuItem.submenu?.addItem(PullRequestMenuItem(title: "Checkout...", action: #selector(self.checkoutPullRequest), pr: pr))
@@ -144,6 +157,14 @@ class PullRequestMenuItem: NSMenuItem {
     
     required init(coder decoder: NSCoder) {
         super.init(coder: decoder)
+    }
+    
+}
+
+extension GithubPolling.GithubPullRequest {
+    
+    var repoName: String {
+        return url.components(separatedBy: "/")[4...5].joined(separator: "/").lowercased()
     }
     
 }

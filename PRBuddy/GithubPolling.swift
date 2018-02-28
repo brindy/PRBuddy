@@ -26,11 +26,19 @@ class GithubPolling {
             var avatar_url: String
         }
         
-        struct Commit: Decodable {
+        struct Commit: Decodable { // "head" or "base"
+            
+            struct Repo: Decodable {
+                
+                var ssh_url: String
+                
+            }
             
             var label: String
             var ref: String
             var sha: String
+            
+            var repo: Repo
             
         }
         
@@ -43,10 +51,6 @@ class GithubPolling {
 
         var head: Commit
         var base: Commit
-        
-        var repo: String {
-            return url.components(separatedBy: "/")[4...5].joined(separator: "/")
-        }
         
         var hashValue: Int {
             return url.hashValue

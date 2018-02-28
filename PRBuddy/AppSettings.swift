@@ -26,6 +26,7 @@ class AppSettings {
         static let noPRs = "noPRs"
         static let pollingTime = "pollingTime"
         static let repos = "repos"
+        static let checkoutDir = "checkoutDir"
         
     }
     
@@ -95,6 +96,22 @@ class AppSettings {
             let set = Set<String>(newValue)
             let array = Array<String>(set)
             userDefaults.set(array, forKey: Keys.repos)
+            fireChanged()
+        }
+    }
+    
+    // Call #startAccessingSecurityScopedResource before and #stopAccessingSecurityScopedResource after using this URL
+    var checkoutDir: URL? {
+        get {
+            guard let data = userDefaults.data(forKey: Keys.checkoutDir) else { return nil}
+            var isStale = false
+            guard let url = try? URL(resolvingBookmarkData: data, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) else { return nil }
+            // guard url?.startAccessingSecurityScopedResource() ?? false else { return nil }
+            return url
+        }
+        set {
+            let data = try? newValue?.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+            userDefaults.set(data as Any, forKey: Keys.checkoutDir)
             fireChanged()
         }
     }
