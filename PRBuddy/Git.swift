@@ -55,18 +55,23 @@ class Git {
         return self
     }
     
-    func fetch(from remoteName: String) -> Git {
-        commands.append(Command(dir: projectPath, arguments: [ "fetch",  remoteName ]))
-        return self
-    }
-
-    func checkout(branch localBranch: String, from remoteBranch: String) -> Git {
-        commands.append(Command(dir: projectPath, arguments: [ "checkout",  "-b", localBranch, remoteBranch ]))
+    func fetch(fromRepo repo: String, withRef ref: String) -> Git {
+        commands.append(Command(dir: projectPath, arguments: [ "fetch",  repo, ref ]))
         return self
     }
     
+    func checkout(branch: String, fromRef ref: String) -> Git {
+        commands.append(Command(dir: projectPath, arguments: [ "checkout",  "-b", branch, ref ]))
+        return self
+    }
+
     func merge(branch localBranch: String) -> Git {
         commands.append(Command(dir: projectPath, arguments: [ "merge",  localBranch ]))
+        return self
+    }
+    
+    func pull(repoUrl: String, branch: String) -> Git {
+        commands.append(Command(dir: projectPath, arguments: [ "pull",  repoUrl, branch ]))
         return self
     }
     

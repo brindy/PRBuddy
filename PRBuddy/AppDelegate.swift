@@ -111,7 +111,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let tmpCheckoutDir = NSURL.fileURL(withPathComponents: [String(checkoutDir.absoluteString.dropFirst("file://".count)),  UUID.init().uuidString])!
         try? FileManager.default.createDirectory(at: tmpCheckoutDir, withIntermediateDirectories: true, attributes: [:])
         
-        let branchName = sender.pr.head.ref
+        let headBranchName = sender.pr.head.label.replacingOccurrences(of: ":", with: "-")
+        
         let projectName = sender.pr.base.repo.name
 
         polling.stop()
@@ -119,9 +120,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         Git(xcodePath: xcodePath, checkoutDir: tmpCheckoutDir, project: projectName)
             .clone(url: sender.pr.base.repo.clone_url)
-            .fetch(from: "origin")
-            .checkout(branch: branchName, from: "origin/\(branchName)")
-            .merge(branch: "develop").start { progress in
+            .fetch(fromRepo: sender.pr.base.repo.clone_url, withRef: sender.pr.base.ref)
+            .checkout(branch: headBranchName, fromRef: sender.pr.base.ref)
+            .pull(repoUrl: sender.pr.head.repo.clone_url, branch: sender.pr.head.ref)
+            .start { progress in
         
                 let startTimer = self.lastProgress == nil
                 self.lastProgress = progress
