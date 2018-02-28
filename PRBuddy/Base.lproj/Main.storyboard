@@ -674,14 +674,14 @@ Gw
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             </progressIndicator>
                             <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="17" horizontalPageScroll="10" verticalLineScroll="17" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="qTy-1O-iSP">
-                                <rect key="frame" x="20" y="43" width="440" height="104"/>
+                                <rect key="frame" x="20" y="43" width="440" height="70"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <clipView key="contentView" ambiguous="YES" id="G1N-bH-7w9">
-                                    <rect key="frame" x="1" y="1" width="438" height="102"/>
+                                    <rect key="frame" x="1" y="1" width="438" height="68"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <outlineView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" selectionHighlightStyle="sourceList" multipleSelection="NO" autosaveColumns="NO" rowSizeStyle="automatic" viewBased="YES" indentationPerLevel="16" outlineTableColumn="bq1-NJ-ydl" id="YtO-Rw-4zj">
-                                            <rect key="frame" x="0.0" y="0.0" width="438" height="102"/>
+                                            <rect key="frame" x="0.0" y="0.0" width="438" height="68"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <size key="intercellSpacing" width="3" height="0.0"/>
                                             <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
@@ -735,7 +735,7 @@ Gw
                                 </scroller>
                             </scrollView>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rnf-Ba-5iK">
-                                <rect key="frame" x="18" y="155" width="83" height="17"/>
+                                <rect key="frame" x="18" y="121" width="83" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Repositories:" id="V1Q-Gc-8gm">
                                     <font key="font" metaFont="system"/>
@@ -744,9 +744,18 @@ Gw
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WYF-qA-Ohc">
-                                <rect key="frame" x="18" y="211" width="105" height="17"/>
+                                <rect key="frame" x="18" y="226" width="105" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Checkout folder:" id="O1y-SA-7V6">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ccU-yC-ULr">
+                                <rect key="frame" x="45" y="176" width="78" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="Xcode Path:" id="MGg-3S-OO4">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -832,7 +841,7 @@ Gw
                                 </textFieldCell>
                             </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="nyJ-U1-m2m">
-                                <rect key="frame" x="123" y="202" width="79" height="32"/>
+                                <rect key="frame" x="123" y="217" width="79" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Select" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Q18-8G-0Jf">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -842,17 +851,19 @@ Gw
                                     <action selector="selectCheckoutFolderWithSender:" target="XfG-lQ-9wD" id="JvM-U8-nEe"/>
                                 </connections>
                             </button>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jjG-dR-AyJ">
-                                <rect key="frame" x="18" y="186" width="441" height="17"/>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ABJ-jy-LAo">
+                                <rect key="frame" x="123" y="166" width="79" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" title="&lt;none set&gt;" id="qdX-A9-3Rz">
-                                    <font key="font" metaFont="smallSystem"/>
-                                    <color key="textColor" name="systemGrayColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
+                                <buttonCell key="cell" type="push" title="Select" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f96-IC-ldM">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="selectXcodePathWithSender:" target="XfG-lQ-9wD" id="IlR-08-bqE"/>
+                                </connections>
+                            </button>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="BCY-4x-JKP">
-                                <rect key="frame" x="202" y="202" width="129" height="32"/>
+                                <rect key="frame" x="202" y="217" width="129" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <buttonCell key="cell" type="push" title="Open in Finder" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="Pzb-fl-BkJ">
                                     <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -862,6 +873,24 @@ Gw
                                     <action selector="openCheckoutFolderWithSender:" target="XfG-lQ-9wD" id="0sR-uv-DDi"/>
                                 </connections>
                             </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jjG-dR-AyJ">
+                                <rect key="frame" x="18" y="201" width="441" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" title="&lt;none set&gt;" id="qdX-A9-3Rz">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="systemGrayColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="E2h-Qe-SbZ">
+                                <rect key="frame" x="18" y="151" width="441" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" lineBreakMode="truncatingMiddle" sendsActionOnEndEditing="YES" title="&lt;none set&gt;" id="wO3-tN-aX8">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="systemGrayColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
@@ -876,6 +905,7 @@ Gw
                         <outlet property="validateButton" destination="QaP-Ly-Nrz" id="SFT-Do-4zF"/>
                         <outlet property="validationGoodLabel" destination="FNJ-kS-9VG" id="Jeq-kM-AQg"/>
                         <outlet property="validationProgress" destination="BnX-RO-Uf9" id="n7j-6V-gj8"/>
+                        <outlet property="xcodePathLabel" destination="E2h-Qe-SbZ" id="c2I-nN-EA8"/>
                         <segue destination="ngs-gE-nrW" kind="sheet" identifier="about" id="bJV-9R-SnP"/>
                     </connections>
                 </viewController>

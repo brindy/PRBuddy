@@ -27,6 +27,7 @@ class AppSettings {
         static let pollingTime = "pollingTime"
         static let repos = "repos"
         static let checkoutDir = "checkoutDir"
+        static let xcodePath = "xcodePath"
         
     }
     
@@ -115,7 +116,23 @@ class AppSettings {
             fireChanged()
         }
     }
-    
+
+    // Call #startAccessingSecurityScopedResource before and #stopAccessingSecurityScopedResource after using this URL
+    var xcodePath: URL? {
+        get {
+            guard let data = userDefaults.data(forKey: Keys.xcodePath) else { return nil}
+            var isStale = false
+            guard let url = try? URL(resolvingBookmarkData: data, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) else { return nil }
+            // guard url?.startAccessingSecurityScopedResource() ?? false else { return nil }
+            return url
+        }
+        set {
+            let data = try? newValue?.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+            userDefaults.set(data as Any, forKey: Keys.xcodePath)
+            fireChanged()
+        }
+    }
+
     private func fireChanged() {
         NotificationCenter.default.post(name: Notifications.changed, object: nil)
     }

@@ -13,9 +13,10 @@
 		854527D5204048CF00DFC643 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 854527D3204048CF00DFC643 /* Main.storyboard */; };
 		854527DE204085F800DFC643 /* GithubPolling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527DD204085F800DFC643 /* GithubPolling.swift */; };
 		854527E02040862900DFC643 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527DF2040862900DFC643 /* AppSettings.swift */; };
-		854527E3204098F700DFC643 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854527E2204098F700DFC643 /* Alamofire.framework */; };
 		854527E62040E3B600DFC643 /* AddRepoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527E52040E3B600DFC643 /* AddRepoViewController.swift */; };
 		85B9B90F204720E10086E994 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B9B90E204720E10086E994 /* AboutViewController.swift */; };
+		85B9B91020473B8D0086E994 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854527E2204098F700DFC643 /* Alamofire.framework */; };
+		85B9B912204743180086E994 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B9B911204743180086E994 /* Git.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		854527E2204098F700DFC643 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/Mac/Alamofire.framework; sourceTree = "<group>"; };
 		854527E52040E3B600DFC643 /* AddRepoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRepoViewController.swift; sourceTree = "<group>"; };
 		85B9B90E204720E10086E994 /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
+		85B9B911204743180086E994 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -38,7 +40,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				854527E3204098F700DFC643 /* Alamofire.framework in Frameworks */,
+				85B9B91020473B8D0086E994 /* Alamofire.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,16 +67,17 @@
 		854527CC204048CF00DFC643 /* PRBuddy */ = {
 			isa = PBXGroup;
 			children = (
+				85B9B90E204720E10086E994 /* AboutViewController.swift */,
 				854527E52040E3B600DFC643 /* AddRepoViewController.swift */,
 				854527CD204048CF00DFC643 /* AppDelegate.swift */,
 				854527DF2040862900DFC643 /* AppSettings.swift */,
 				854527D1204048CF00DFC643 /* Assets.xcassets */,
+				85B9B911204743180086E994 /* Git.swift */,
 				854527DD204085F800DFC643 /* GithubPolling.swift */,
 				854527D6204048CF00DFC643 /* Info.plist */,
 				854527D3204048CF00DFC643 /* Main.storyboard */,
 				854527D7204048CF00DFC643 /* PRBuddy.entitlements */,
 				854527CF204048CF00DFC643 /* SettingsViewController.swift */,
-				85B9B90E204720E10086E994 /* AboutViewController.swift */,
 			);
 			path = PRBuddy;
 			sourceTree = "<group>";
@@ -183,6 +186,7 @@
 				854527D0204048CF00DFC643 /* SettingsViewController.swift in Sources */,
 				854527DE204085F800DFC643 /* GithubPolling.swift in Sources */,
 				854527E02040862900DFC643 /* AppSettings.swift in Sources */,
+				85B9B912204743180086E994 /* Git.swift in Sources */,
 				854527CE204048CF00DFC643 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -30,7 +30,9 @@ class GithubPolling {
             
             struct Repo: Decodable {
                 
+                var name: String
                 var ssh_url: String
+                var clone_url: String
                 
             }
             

@@ -17,6 +17,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var windowController: NSWindowController!
     var item: NSStatusItem!
     
+    var lastProgress: Git.Progress?
+    
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
@@ -97,21 +99,60 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func checkoutPullRequest(sender: PullRequestMenuItem) {
         print(#function, sender)
         
-        let tmpDir = settings.checkoutDir!
-        let tmpCheckoutDir = UUID.init().uuidString
-        let dir = NSURL.fileURL(withPathComponents: [tmpDir.absoluteString, tmpCheckoutDir])!
-        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true, attributes: [:])
+        guard let xcodePath = settings.xcodePath else { return }
+        guard let checkoutDir = settings.checkoutDir else { return }
+
+        guard xcodePath.startAccessingSecurityScopedResource() else { return }
+        guard checkoutDir.startAccessingSecurityScopedResource() else {
+            xcodePath.stopAccessingSecurityScopedResource()
+            return
+        }
+
+        let tmpCheckoutDir = NSURL.fileURL(withPathComponents: [String(checkoutDir.absoluteString.dropFirst("file://".count)),  UUID.init().uuidString])!
+        try? FileManager.default.createDirectory(at: tmpCheckoutDir, withIntermediateDirectories: true, attributes: [:])
         
-        let process = Process()
-        process.launchPath = "/usr/bin/git"
-        process.arguments = ["-C", dir.absoluteString, "clone", sender.pr.base.repo.ssh_url]
-        try? process.run()
+        let branchName = sender.pr.head.ref
+        let projectName = sender.pr.base.repo.name
 
-        NSWorkspace.shared.openFile(dir.absoluteString)
-
-        // TODO checkout base
-        // TODO merge head
-        // TODO open terminal at that location
+        polling.stop()
+        updateBuildingStatus(progress: 0.0)
+        
+        Git(xcodePath: xcodePath, checkoutDir: tmpCheckoutDir, project: projectName)
+            .clone(url: sender.pr.base.repo.clone_url)
+            .fetch(from: "origin")
+            .checkout(branch: branchName, from: "origin/\(branchName)")
+            .merge(branch: "develop").start { progress in
+        
+                let startTimer = self.lastProgress == nil
+                self.lastProgress = progress
+                
+                if startTimer {
+                    Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
+                        if self.lastProgress?.finished ?? true {
+                            timer.invalidate()
+                            return
+                        }
+                        self.updateBuildingStatus(progress: self.lastProgress?.progress ?? 0.0)
+                    }
+                }
+                
+                DispatchQueue.main.async {
+                    guard progress.finished else { return }
+                    self.lastProgress = nil
+                    self.resetStatus()
+                    self.polling.pollNow()
+                    self.polling.start()
+                    
+                    let projectDir = tmpCheckoutDir.appendingPathComponent(projectName)
+                    let openResult = NSWorkspace.shared.open(projectDir)
+                    print(#function, projectDir, openResult)
+                    
+                    xcodePath.stopAccessingSecurityScopedResource()
+                    checkoutDir.stopAccessingSecurityScopedResource()
+                }
+        }
+        
+        
     }
 
     @objc func ignorePullRequest(sender: PullRequestMenuItem) {
@@ -125,10 +166,20 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         controller.showAbout()
     }
 
+    private func updateBuildingStatus(progress: Double) {
+        let percent = Int(progress * 100)
+        var lifter = " 🏋️‍♀️"
+        if item.button?.title.starts(with: " ") ?? false {
+            lifter = "🏋️‍♀️ "
+        }
+        item.button?.title = "\(lifter)\(percent)%"
+    }
+    
     private func createPRMenuItem(pr: GithubPolling.GithubPullRequest, requested: Bool) -> PullRequestMenuItem {
         let title = "\(requested ? settings.reviewRequested : "")\(pr.repoName): \(pr.title)"
         let menuItem = PullRequestMenuItem(title: title, action: #selector(self.openPullRequestURL), pr: pr)
         menuItem.submenu = NSMenu(title: "Actions")
+        menuItem.submenu?.addItem(PullRequestMenuItem(title: "Open in Browser", action: #selector(self.openPullRequestURL), pr: pr))
         menuItem.submenu?.addItem(PullRequestMenuItem(title: "Checkout...", action: #selector(self.checkoutPullRequest), pr: pr))
         
         if requested {

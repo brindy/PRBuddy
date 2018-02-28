@@ -15,8 +15,10 @@ class SettingsViewController: NSViewController {
     @IBOutlet var pollingMinutesField: NSTextField!
     @IBOutlet var reviewRequestedField: NSTextField!
     @IBOutlet var noPRsField: NSTextField!
-    @IBOutlet var checkoutDirLabel: NSTextField!
     
+    @IBOutlet var checkoutDirLabel: NSTextField!
+    @IBOutlet var xcodePathLabel: NSTextField!
+
     @IBOutlet var validateButton: NSButton!
     @IBOutlet var validationProgress: NSProgressIndicator!
 
@@ -72,6 +74,23 @@ class SettingsViewController: NSViewController {
             self.settings.checkoutDir = url
         }
         
+    }
+    
+    @IBAction func selectXcodePath(sender: Any) {
+
+        print(#function)
+        
+        let openPanel = NSOpenPanel()
+        openPanel.allowsMultipleSelection = false
+        openPanel.canChooseDirectories = false
+        openPanel.canCreateDirectories = false
+        openPanel.canChooseFiles = true
+        openPanel.begin { result in
+            guard result == NSApplication.ModalResponse.OK else { return }
+            guard let url = openPanel.url else { return }
+            self.settings.xcodePath = url
+        }
+
     }
     
     @IBAction func openCheckoutFolder(sender: Any) {
@@ -132,6 +151,7 @@ class SettingsViewController: NSViewController {
         reviewRequestedField.stringValue = settings.reviewRequested
         noPRsField.stringValue = settings.noPRs
         checkoutDirLabel.stringValue = String(settings.checkoutDir?.absoluteString.dropFirst("file://".count) ?? "<none selected>")
+        xcodePathLabel.stringValue = String(settings.xcodePath?.absoluteString.dropFirst("file://".count) ?? "<none selected>")
     }
     
 }
