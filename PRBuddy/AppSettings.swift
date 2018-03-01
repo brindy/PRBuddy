@@ -12,6 +12,7 @@ class AppSettings {
     
     struct Defaults {
         
+        static let assigned = "✍️"
         static let reviewRequested = "👋"
         static let noPRs = "💤"
         static let pollingTime = 1
@@ -24,6 +25,7 @@ class AppSettings {
         static let personalAccessToken = "personalAccessToken"
         static let reviewRequested = "reviewRequested"
         static let noPRs = "noPRs"
+        static let assigned = "assigned"
         static let pollingTime = "pollingTime"
         static let repos = "repos"
         static let checkoutDir = "checkoutDir"
@@ -48,7 +50,17 @@ class AppSettings {
             fireChanged()
         }
     }
-    
+
+    var assigned: String {
+        get {
+            return userDefaults.string(forKey: Keys.assigned) ?? Defaults.assigned
+        }
+        set {
+            userDefaults.set(newValue, forKey: Keys.assigned)
+            fireChanged()
+        }
+    }
+
     var noPRs: String {
         get {
             return userDefaults.string(forKey: Keys.noPRs) ?? Defaults.noPRs

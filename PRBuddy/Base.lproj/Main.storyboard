@@ -626,18 +626,18 @@ Gw
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yyf-TI-57y">
-                                <rect key="frame" x="58" y="299" width="111" height="17"/>
+                                <rect key="frame" x="69" y="299" width="100" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Requests waiting:" id="4LO-Ad-lZU">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="PRs Requested:" id="4LO-Ad-lZU">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Whl-Mp-v90">
-                                <rect key="frame" x="87" y="260" width="82" height="17"/>
+                                <rect key="frame" x="123" y="260" width="46" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="No requests:" id="7Mz-YZ-h8g">
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="No PR:" id="7Mz-YZ-h8g">
                                     <font key="font" metaFont="system"/>
                                     <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
@@ -655,6 +655,15 @@ Gw
                                 <connections>
                                     <outlet property="delegate" destination="XfG-lQ-9wD" id="B7G-13-TmG"/>
                                 </connections>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="njo-3Y-izy">
+                                <rect key="frame" x="217" y="299" width="91" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="PRs Assigned:" id="qvq-B9-kdh">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i4U-0h-jRT">
                                 <rect key="frame" x="175" y="253" width="36" height="31"/>
@@ -891,9 +900,23 @@ Gw
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sfI-fg-Pa5">
+                                <rect key="frame" x="314" y="292" width="36" height="31"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" drawsBackground="YES" id="TTD-aC-5Fb">
+                                    <customFormatter key="formatter" id="uVx-mQ-kGD" customClass="SingleCharFormatter" customModule="PRBuddy" customModuleProvider="target"/>
+                                    <font key="font" size="13" name="AppleColorEmoji"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                                <connections>
+                                    <outlet property="delegate" destination="XfG-lQ-9wD" id="bKH-JT-6e8"/>
+                                </connections>
+                            </textField>
                         </subviews>
                     </view>
                     <connections>
+                        <outlet property="assignedField" destination="sfI-fg-Pa5" id="4qc-z6-Xsb"/>
                         <outlet property="checkoutDirLabel" destination="jjG-dR-AyJ" id="ik3-NH-GQc"/>
                         <outlet property="noPRsField" destination="i4U-0h-jRT" id="3Rp-UI-xtS"/>
                         <outlet property="personalAccessTokenField" destination="m6y-wg-cUt" id="k5j-PA-ACa"/>

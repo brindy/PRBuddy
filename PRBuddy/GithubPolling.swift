@@ -101,12 +101,10 @@ class GithubPolling {
     }
     
     func start() {
+        stop()
         guard settings.username != nil, settings.personalAccessToken != nil else { return }
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            self.timer = Timer.scheduledTimer(withTimeInterval: Double(self.settings.pollingTime) * 60.0, repeats: true) { timer in
-                self.pollNow()
-            }
+        self.timer = Timer.scheduledTimer(withTimeInterval: Double(self.settings.pollingTime) * 60.0, repeats: true) { timer in
+            self.pollNow()
         }
     }
     

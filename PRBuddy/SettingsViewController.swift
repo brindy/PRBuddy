@@ -15,7 +15,8 @@ class SettingsViewController: NSViewController {
     @IBOutlet var pollingMinutesField: NSTextField!
     @IBOutlet var reviewRequestedField: NSTextField!
     @IBOutlet var noPRsField: NSTextField!
-    
+    @IBOutlet var assignedField: NSTextField!
+
     @IBOutlet var checkoutDirLabel: NSTextField!
     @IBOutlet var xcodePathLabel: NSTextField!
 
@@ -150,6 +151,7 @@ class SettingsViewController: NSViewController {
         pollingMinutesField.integerValue = settings.pollingTime
         reviewRequestedField.stringValue = settings.reviewRequested
         noPRsField.stringValue = settings.noPRs
+        assignedField.stringValue = settings.assigned
         checkoutDirLabel.stringValue = String(settings.checkoutDir?.absoluteString.dropFirst("file://".count) ?? "<none selected>")
         xcodePathLabel.stringValue = String(settings.xcodePath?.absoluteString.dropFirst("file://".count) ?? "<none selected>")
     }

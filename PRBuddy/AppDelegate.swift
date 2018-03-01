@@ -24,8 +24,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
         windowController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Main")) as? NSWindowController
 
-
-        item = NSStatusBar.system.statusItem(withLength: 100)
+        item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         buildMenu()
         updateStatus()
         
@@ -39,17 +38,27 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func updateStatus() {
         buildMenu()
         resetStatus()
+
+        var attention = [String]()
         
         if !polling.reviewsRequested.isEmpty {
-            item.button?.title = "\(settings.reviewRequested): \(polling.reviewsRequested.count)/\(polling.allPullRequests.count)"
-        } else if !polling.assigned.isEmpty {
-            item.button?.title = "✍️: \(polling.assigned.count)/\(polling.allPullRequests.count)"
+            attention.append("\(settings.reviewRequested): \(polling.reviewsRequested.count)")
+        }
+        
+        if !polling.assigned.isEmpty {
+            attention.append("\(settings.assigned): \(polling.assigned.count)")
+        }
+        
+        if !attention.isEmpty {
+            item.button?.title = attention.joined(separator: " ")
         }
         
     }
+    
 
     func resetStatus() {
-        item.button?.title = "\(settings.noPRs) (\(polling.allPullRequests.count))"
+        item.button?.title = "\(settings.noPRs) \(polling.allPullRequests.count)"
+        item.button?.sizeToFit()
     }
     
     func buildMenu() {
@@ -65,16 +74,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             
             let others = polling.allPullRequests.subtracting(requested).subtracting(assigned)
             
-            for pr in assigned.sorted(by: { $0.repoName < $1.repoName }) {
-                menu.addItem(createPRMenuItem(pr: pr, prefix: "✍️"))
-            }
-            
             for pr in requested.sorted(by: { $0.repoName < $1.repoName }) {
                 menu.addItem(createPRMenuItem(pr: pr, prefix: settings.reviewRequested))
             }
             
+            for pr in assigned.sorted(by: { $0.repoName < $1.repoName }) {
+                menu.addItem(createPRMenuItem(pr: pr, prefix: settings.assigned))
+            }
+            
             for pr in others.sorted(by: { $0.repoName < $1.repoName }) {
-                menu.addItem(createPRMenuItem(pr: pr, prefix: " "))
+                menu.addItem(createPRMenuItem(pr: pr, prefix: ""))
             }
             
             menu.addItem(NSMenuItem.separator())
@@ -230,7 +239,7 @@ class PullRequestMenuItem: NSMenuItem {
 extension GithubPolling.GithubPullRequest {
     
     var repoName: String {
-        return url.components(separatedBy: "/")[4...5].joined(separator: "/").lowercased()
+        return url.components(separatedBy: "/")[4...5].joined(separator: "/")
     }
     
 }
