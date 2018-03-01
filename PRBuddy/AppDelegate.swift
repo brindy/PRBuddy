@@ -39,9 +39,13 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     func updateStatus() {
         buildMenu()
         resetStatus()
+        
         if !polling.reviewsRequested.isEmpty {
             item.button?.title = "\(settings.reviewRequested): \(polling.reviewsRequested.count)/\(polling.allPullRequests.count)"
+        } else if !polling.assigned.isEmpty {
+            item.button?.title = "✍️: \(polling.assigned.count)/\(polling.allPullRequests.count)"
         }
+        
     }
 
     func resetStatus() {
@@ -56,14 +60,23 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menu.addItem(NSMenuItem.separator())
 
         if polling.allPullRequests.count > 0 {
-            let requested = polling.allPullRequests.filter({ $0.requested_reviewers.contains(where: { $0.login == settings.username }) })
-            let others = polling.allPullRequests.subtracting(requested)
+            let requested = polling.reviewsRequested
+            let assigned = polling.assigned
+            
+            let others = polling.allPullRequests.subtracting(requested).subtracting(assigned)
+            
+            for pr in assigned.sorted(by: { $0.repoName < $1.repoName }) {
+                menu.addItem(createPRMenuItem(pr: pr, prefix: "✍️"))
+            }
+            
             for pr in requested.sorted(by: { $0.repoName < $1.repoName }) {
-                menu.addItem(createPRMenuItem(pr: pr, requested: true))
+                menu.addItem(createPRMenuItem(pr: pr, prefix: settings.reviewRequested))
             }
+            
             for pr in others.sorted(by: { $0.repoName < $1.repoName }) {
-                 menu.addItem(createPRMenuItem(pr: pr, requested: false))
+                menu.addItem(createPRMenuItem(pr: pr, prefix: " "))
             }
+            
             menu.addItem(NSMenuItem.separator())
         }
         
@@ -177,14 +190,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         item.button?.title = "\(lifter)\(percent)%"
     }
     
-    private func createPRMenuItem(pr: GithubPolling.GithubPullRequest, requested: Bool) -> PullRequestMenuItem {
-        let title = "\(requested ? settings.reviewRequested : "")\(pr.repoName): \(pr.title)"
+    private func createPRMenuItem(pr: GithubPolling.GithubPullRequest, prefix: String) -> PullRequestMenuItem {
+        let title = "\(prefix)\(pr.repoName): \(pr.title)"
         let menuItem = PullRequestMenuItem(title: title, action: #selector(self.openPullRequestURL), pr: pr)
         menuItem.submenu = NSMenu(title: "Actions")
         menuItem.submenu?.addItem(PullRequestMenuItem(title: "Open in Browser", action: #selector(self.openPullRequestURL), pr: pr))
         menuItem.submenu?.addItem(PullRequestMenuItem(title: "Checkout...", action: #selector(self.checkoutPullRequest), pr: pr))
         
-        if requested {
+        if prefix == settings.reviewRequested {
             menuItem.submenu?.addItem(PullRequestMenuItem(title: "Ignore", action: #selector(self.ignorePullRequest), pr: pr))
         }
         

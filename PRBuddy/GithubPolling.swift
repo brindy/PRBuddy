@@ -50,6 +50,7 @@ class GithubPolling {
         var state: String
         var user: User
         var requested_reviewers: [User]
+        var assignees: [User]
 
         var head: Commit
         var base: Commit
@@ -67,11 +68,20 @@ class GithubPolling {
     var error: String?
 
     var allPullRequests = Set<GithubPullRequest>()
+    
     var reviewsRequested: [GithubPullRequest] {
-        let requests = allPullRequests.filter( { $0.requested_reviewers.contains(where: { $0.login == settings.username }) } )
+        let requests = allPullRequests.filter( {
+            $0.requested_reviewers.contains(where: { $0.login == settings.username }) &&
+            !$0.assignees.contains(where: { $0.login == settings.username })
+        } )
         return Array<GithubPullRequest>(requests)
     }
     
+    var assigned: [GithubPullRequest] {
+        let requests = allPullRequests.filter( { $0.assignees.contains(where: { $0.login == settings.username }) } )
+        return Array<GithubPullRequest>(requests)
+    }
+
     private let settings = AppSettings()
     private var timer:Timer?
 
