@@ -8,6 +8,11 @@
 
 import Foundation
 
+// TODO open finder from notification
+// TODO open finder after checkout
+// TODO copy to pasteboard from notification
+// TODO copy to pasteboard after checkout
+
 class AppSettings {
     
     struct Defaults {

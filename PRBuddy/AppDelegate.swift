@@ -18,6 +18,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var item: NSStatusItem!
     
     var lastProgress: Git.Progress?
+    var progressTimer: Timer?
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
         
@@ -139,7 +140,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         let projectName = sender.pr.base.repo.name
 
         polling.stop()
-        updateBuildingStatus(progress: 0.0)
+        updateBuildingStatus(description: "Starting")
         
         Git(xcodePath: xcodePath, checkoutDir: tmpCheckoutDir, project: projectName)
             .clone(url: sender.pr.base.repo.clone_url)
@@ -148,53 +149,33 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             .pull(repoUrl: sender.pr.head.repo.clone_url, branch: sender.pr.head.ref)
             .start { progress in
         
-                let startTimer = self.lastProgress == nil
-                self.lastProgress = progress
+                print(#function, progress)
                 
-                if startTimer {
-                    Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
-                        if self.lastProgress?.finished ?? true {
-                            timer.invalidate()
-                            return
-                        }
-                        self.updateBuildingStatus(progress: self.lastProgress?.progress ?? 0.0)
-                    }
-                }
+                self.lastProgress = progress
                 
                 DispatchQueue.main.async {
                     guard progress.finished else { return }
+
+                    self.stopCheckoutProgress()
+                    
+                    print(#function, "Git finished")
+                    
                     self.lastProgress = nil
                     self.resetStatus()
                     self.polling.pollNow()
                     self.polling.start()
                     
                     let projectDir = tmpCheckoutDir.appendingPathComponent(projectName)
-                    let openResult = NSWorkspace.shared.open(projectDir)
-                    print(#function, projectDir, openResult)
-                    
-                    let tmpCheckoutPath = String(tmpCheckoutDir.absoluteString.dropFirst("file://".count))
-                    
-                    NSPasteboard.general.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
-                    let pasteboardResult = NSPasteboard.general.setString(tmpCheckoutPath, forType: NSPasteboard.PasteboardType.fileURL)
-                    print(#function, "pasteboardResult", pasteboardResult)
-                    
-                
-                    let notification = NSUserNotification()
-                    notification.identifier = "PRBuddy Checkout"
-                    notification.title = "PRBuddy"
-                    notification.subtitle = "Checkout complete"
-                    notification.informativeText = tmpCheckoutPath
-                    notification.actionButtonTitle = "Copy location"
-                    notification.hasActionButton = true
-                
-                    NSUserNotificationCenter.default.removeAllDeliveredNotifications()
-                    NSUserNotificationCenter.default.deliver(notification)
+                    let projectPath = String(projectDir.absoluteString.dropFirst("file://".count))
+
+                    self.checkoutComplete(projectPath)
                     
                     xcodePath.stopAccessingSecurityScopedResource()
                     checkoutDir.stopAccessingSecurityScopedResource()
                 }
         }
         
+        startCheckoutProgress()
         
     }
 
@@ -208,14 +189,38 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         guard let controller = windowController.contentViewController as? SettingsViewController else { return }
         controller.showAbout()
     }
+    
+    private func checkoutComplete(_ projectPath: String) {
+        NSPasteboard.general.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
+        let pasteboardResult = NSPasteboard.general.setString(projectPath, forType: NSPasteboard.PasteboardType.fileURL)
+        print(#function, "pasteboardResult", pasteboardResult)
+        
+        let notification = NSUserNotification()
+        notification.identifier = UUID().uuidString
+        notification.title = "PRBuddy"
+        notification.subtitle = "Checkout complete"
+        notification.informativeText = projectPath
+        NSUserNotificationCenter.default.deliver(notification)
+    }
 
-    private func updateBuildingStatus(progress: Double) {
-        let percent = Int(progress * 100)
-        var lifter = " 🏋️‍♀️"
-        if item.button?.title.starts(with: " ") ?? false {
-            lifter = "🏋️‍♀️ "
+    private func stopCheckoutProgress() {
+        progressTimer?.invalidate()
+        progressTimer = nil
+    }
+    
+    private func startCheckoutProgress() {
+        stopCheckoutProgress()
+        progressTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { timer in
+            self.updateBuildingStatus(description: self.lastProgress?.description ?? "Starting")
         }
-        item.button?.title = "\(lifter)\(percent)%"
+    }
+    
+    private func updateBuildingStatus(description: String) {
+        var progress = "💃"
+        if item.button?.title.starts(with: "💃") ?? false {
+            progress = "🕺"
+        }
+        item.button?.title = "\(progress) \(description)"
     }
     
     private func createPRMenuItem(pr: GithubPolling.GithubPullRequest, prefix: String) -> PullRequestMenuItem {
@@ -250,20 +255,16 @@ extension AppDelegate: NSUserNotificationCenterDelegate {
         print(#function, notification)
         
         guard let path = notification.informativeText else { return }
+        print(#function, "path", path)
         
         NSPasteboard.general.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
         let pasteboardResult = NSPasteboard.general.setString(path, forType: NSPasteboard.PasteboardType.fileURL)
         print(#function, "pasteboardResult", pasteboardResult)
         
+        
         if let url = settings.checkoutDir,
             url.startAccessingSecurityScopedResource() {
-            
-            if let projectPath = path.components(separatedBy: "/").last {
-                let projectUrl = url.appendingPathComponent(projectPath, isDirectory: true)
-                let openResult = NSWorkspace.shared.open(projectUrl)
-                print(#function, path, projectPath, projectUrl, openResult)
-            }
-
+            NSWorkspace.shared.openFile(path, withApplication: "Terminal")
             url.stopAccessingSecurityScopedResource()
         }
         

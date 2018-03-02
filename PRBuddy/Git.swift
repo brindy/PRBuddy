@@ -14,7 +14,7 @@ class Git {
         
         let command: String?
         let exitStatus: Int32?
-        let progress: Double
+        let description: String
         let finished: Bool
         
     }
@@ -23,6 +23,7 @@ class Git {
         
         let dir: String
         let arguments: [String]
+        let description: String
         
     }
     
@@ -51,27 +52,27 @@ class Git {
     }
     
     func clone(url: String) -> Git {
-        commands.append(Command(dir: checkoutPath, arguments: [ "clone",  "--recursive", url ]))
+        commands.append(Command(dir: checkoutPath, arguments: [ "clone",  "--recursive", url ], description: "Cloning"))
         return self
     }
     
     func fetch(fromRepo repo: String, withRef ref: String) -> Git {
-        commands.append(Command(dir: projectPath, arguments: [ "fetch",  repo, ref ]))
+        commands.append(Command(dir: projectPath, arguments: [ "fetch",  repo, ref ], description: "Fetching"))
         return self
     }
     
     func checkout(branch: String, fromRef ref: String) -> Git {
-        commands.append(Command(dir: projectPath, arguments: [ "checkout",  "-b", branch, ref ]))
+        commands.append(Command(dir: projectPath, arguments: [ "checkout",  "-b", branch, ref ], description: "Checking out"))
         return self
     }
 
     func merge(branch localBranch: String) -> Git {
-        commands.append(Command(dir: projectPath, arguments: [ "merge",  localBranch ]))
+        commands.append(Command(dir: projectPath, arguments: [ "merge",  localBranch ], description: "Merging"))
         return self
     }
     
     func pull(repoUrl: String, branch: String) -> Git {
-        commands.append(Command(dir: projectPath, arguments: [ "pull",  repoUrl, branch ]))
+        commands.append(Command(dir: projectPath, arguments: [ "pull",  repoUrl, branch ], description: "Pulling"))
         return self
     }
     
@@ -81,20 +82,17 @@ class Git {
     
     private func next(progressHandler: @escaping (Progress) -> ()) {
         guard let command = commands.first else {
-            progressHandler(Progress(command: nil, exitStatus: nil, progress: 1.0, finished: false))
+            progressHandler(Progress(command: nil, exitStatus: nil, description: "Done", finished: true))
             return
         }
         
         commands.remove(at: 0)
         
         let commandString = command.arguments.joined(separator: " ")
-        let progress = 1.0 / Double(commands.count + 1)
-        print(#function, progress)
-        progressHandler(Progress(command: commandString, exitStatus: nil, progress: progress, finished: false))
-        
+        progressHandler(Progress(command: commandString, exitStatus: nil, description: command.description, finished: false))
+
         execute(command: command) { exitStatus in
-            progressHandler(Progress(command: commandString, exitStatus: exitStatus, progress: progress, finished: exitStatus != 0))
-            guard exitStatus == 0 else { return }
+            progressHandler(Progress(command: commandString, exitStatus: exitStatus, description: command.description, finished: self.commands.isEmpty))
             self.next(progressHandler: progressHandler)
         }
         
