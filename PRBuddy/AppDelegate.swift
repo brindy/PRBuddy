@@ -27,6 +27,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         buildMenu()
         updateStatus()
+    
+        NSUserNotificationCenter.default.delegate = self
         
         if settings.username == nil || settings.personalAccessToken == nil || settings.repos.isEmpty || settings.checkoutDir == nil {
             showWindowInFront()
@@ -130,11 +132,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             return
         }
 
-        let tmpCheckoutDir = NSURL.fileURL(withPathComponents: [String(checkoutDir.absoluteString.dropFirst("file://".count)),  UUID.init().uuidString])!
+        let tmpCheckoutDir = checkoutDir.appendingPathComponent(UUID().uuidString)
         try? FileManager.default.createDirectory(at: tmpCheckoutDir, withIntermediateDirectories: true, attributes: [:])
         
         let headBranchName = sender.pr.head.label.replacingOccurrences(of: ":", with: "-")
-        
         let projectName = sender.pr.base.repo.name
 
         polling.stop()
@@ -170,6 +171,24 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     let projectDir = tmpCheckoutDir.appendingPathComponent(projectName)
                     let openResult = NSWorkspace.shared.open(projectDir)
                     print(#function, projectDir, openResult)
+                    
+                    let tmpCheckoutPath = String(tmpCheckoutDir.absoluteString.dropFirst("file://".count))
+                    
+                    NSPasteboard.general.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
+                    let pasteboardResult = NSPasteboard.general.setString(tmpCheckoutPath, forType: NSPasteboard.PasteboardType.fileURL)
+                    print(#function, "pasteboardResult", pasteboardResult)
+                    
+                
+                    let notification = NSUserNotification()
+                    notification.identifier = "PRBuddy Checkout"
+                    notification.title = "PRBuddy"
+                    notification.subtitle = "Checkout complete"
+                    notification.informativeText = tmpCheckoutPath
+                    notification.actionButtonTitle = "Copy location"
+                    notification.hasActionButton = true
+                
+                    NSUserNotificationCenter.default.removeAllDeliveredNotifications()
+                    NSUserNotificationCenter.default.deliver(notification)
                     
                     xcodePath.stopAccessingSecurityScopedResource()
                     checkoutDir.stopAccessingSecurityScopedResource()
@@ -217,6 +236,42 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         get {
             return NSApp.delegate as! AppDelegate
         }
+    }
+    
+}
+
+extension AppDelegate: NSUserNotificationCenterDelegate {
+    
+    func userNotificationCenter(_ center: NSUserNotificationCenter, didDeliver notification: NSUserNotification) {
+        print(#function, notification)
+    }
+    
+    func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
+        print(#function, notification)
+        
+        guard let path = notification.informativeText else { return }
+        
+        NSPasteboard.general.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
+        let pasteboardResult = NSPasteboard.general.setString(path, forType: NSPasteboard.PasteboardType.fileURL)
+        print(#function, "pasteboardResult", pasteboardResult)
+        
+        if let url = settings.checkoutDir,
+            url.startAccessingSecurityScopedResource() {
+            
+            if let projectPath = path.components(separatedBy: "/").last {
+                let projectUrl = url.appendingPathComponent(projectPath, isDirectory: true)
+                let openResult = NSWorkspace.shared.open(projectUrl)
+                print(#function, path, projectPath, projectUrl, openResult)
+            }
+
+            url.stopAccessingSecurityScopedResource()
+        }
+        
+    }
+    
+    func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
+        print(#function, notification)
+        return true
     }
     
 }
