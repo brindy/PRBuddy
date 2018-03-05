@@ -192,7 +192,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         notification.title = "PRBuddy"
         notification.subtitle = "Checkout \(projectName) complete"
 
-        if progress.exitStatus != 0 {
+        if let exitStatus = progress.exitStatus, exitStatus != 0 {
             notification.informativeText = "\(progress.description)\n\n\(projectPath)"
         } else {
             notification.informativeText = projectPath
@@ -264,8 +264,10 @@ extension AppDelegate: NSUserNotificationCenterDelegate {
             NSPasteboard.general.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
             _ = NSPasteboard.general.setString(path, forType: NSPasteboard.PasteboardType.fileURL)
             
-            if let url = settings.checkoutDir,
+            if settings.launchTerminal,
+                let url = settings.checkoutDir,
                 url.startAccessingSecurityScopedResource() {
+                
                 NSWorkspace.shared.openFile(path, withApplication: "Terminal")
                 url.stopAccessingSecurityScopedResource()
             }

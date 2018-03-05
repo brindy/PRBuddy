@@ -16,6 +16,8 @@ class SettingsViewController: NSViewController {
     @IBOutlet var reviewRequestedField: NSTextField!
     @IBOutlet var noPRsField: NSTextField!
     @IBOutlet var assignedField: NSTextField!
+    
+    @IBOutlet var launchTerminalCheck: NSButton!
 
     @IBOutlet var checkoutDirLabel: NSTextField!
     @IBOutlet var xcodePathLabel: NSTextField!
@@ -108,6 +110,27 @@ class SettingsViewController: NSViewController {
         }
     }
     
+    @IBAction func purgeCheckoutFolder(sender: Any) {
+        
+        guard let window = window else { return }
+        
+        let alert = NSAlert()
+        alert.informativeText = "This will permanently delete all checkouts in this folder."
+        alert.addButton(withTitle: "😱").keyEquivalent = "Cancel"
+        alert.addButton(withTitle: "👍").keyEquivalent = "Save"
+        alert.alertStyle = .warning
+
+        alert.beginSheetModal(for: window) { response in
+            guard response == .alertSecondButtonReturn else { return }
+            self.purge()
+        }
+        
+    }
+    
+    @IBAction func launchTerminalValueChanged(sender: Any) {
+        settings.launchTerminal = launchTerminalCheck.integerValue > 0
+    }
+    
     @objc func onReviewsRequestedChanged() {
         AppDelegate.instance.updateStatus()
     }
@@ -160,6 +183,27 @@ class SettingsViewController: NSViewController {
         dismissAllPresented()
         performSegue(withIdentifier: NSStoryboardSegue.Identifier("about"), sender: self)
     }
+    
+    private func purge() {
+        
+        let fm = FileManager.default
+        
+        guard let checkoutDir = settings.checkoutDir else { return }
+        guard checkoutDir.startAccessingSecurityScopedResource() else { return }
+        guard let filesToDelete = try? fm.contentsOfDirectory(at: checkoutDir, includingPropertiesForKeys: nil, options: .skipsSubdirectoryDescendants) else { return }
+        
+        for file in filesToDelete {
+            do {
+                try fm.removeItem(at: file)
+            } catch {
+                print(error)
+            }
+        }
+        
+        checkoutDir.stopAccessingSecurityScopedResource()
+        
+        NSUserNotificationCenter.default.removeAllDeliveredNotifications()
+    }
 
     private func dismissAllPresented() {
         for controller in presentedViewControllers ?? [] {
@@ -177,6 +221,7 @@ class SettingsViewController: NSViewController {
         assignedField.stringValue = settings.assigned
         checkoutDirLabel.stringValue = String(settings.checkoutDir?.absoluteString.dropFirst("file://".count) ?? "<none selected>")
         xcodePathLabel.stringValue = String(settings.xcodePath?.absoluteString.dropFirst("file://".count) ?? "<none selected>")
+        launchTerminalCheck.integerValue = settings.launchTerminal ? 1 : 0
     }
     
 }

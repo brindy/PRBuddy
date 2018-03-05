@@ -635,7 +635,7 @@ Gw
                                 </textFieldCell>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Whl-Mp-v90">
-                                <rect key="frame" x="123" y="260" width="46" height="17"/>
+                                <rect key="frame" x="369" y="299" width="46" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="No PR:" id="7Mz-YZ-h8g">
                                     <font key="font" metaFont="system"/>
@@ -657,7 +657,7 @@ Gw
                                 </connections>
                             </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="njo-3Y-izy">
-                                <rect key="frame" x="217" y="299" width="91" height="17"/>
+                                <rect key="frame" x="223" y="299" width="91" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="PRs Assigned:" id="qvq-B9-kdh">
                                     <font key="font" metaFont="system"/>
@@ -666,7 +666,7 @@ Gw
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="i4U-0h-jRT">
-                                <rect key="frame" x="175" y="253" width="36" height="31"/>
+                                <rect key="frame" x="421" y="292" width="36" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" drawsBackground="YES" id="KLY-Z7-uZB">
                                     <customFormatter key="formatter" id="6Ad-8B-4Qp" customClass="SingleCharFormatter" customModule="PRBuddy" customModuleProvider="target"/>
@@ -801,6 +801,15 @@ Gw
                                     <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                                 </textFieldCell>
                             </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="cMy-6R-DQA">
+                                <rect key="frame" x="202" y="174" width="263" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="We use the git executable from here." id="nmv-zo-vZ4">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="windowFrameColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="LIo-pR-f74">
                                 <rect key="frame" x="18" y="376" width="237" height="17"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -901,7 +910,7 @@ Gw
                                 </textFieldCell>
                             </textField>
                             <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="sfI-fg-Pa5">
-                                <rect key="frame" x="314" y="292" width="36" height="31"/>
+                                <rect key="frame" x="320" y="292" width="36" height="31"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" alignment="center" drawsBackground="YES" id="TTD-aC-5Fb">
                                     <customFormatter key="formatter" id="uVx-mQ-kGD" customClass="SingleCharFormatter" customModule="PRBuddy" customModuleProvider="target"/>
@@ -913,11 +922,34 @@ Gw
                                     <outlet property="delegate" destination="XfG-lQ-9wD" id="bKH-JT-6e8"/>
                                 </connections>
                             </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="hso-PZ-MfD">
+                                <rect key="frame" x="18" y="256" width="225" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="check" title="Launch Terminal from notification" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="IVA-4u-C99">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="launchTerminalValueChangedWithSender:" target="XfG-lQ-9wD" id="L60-jH-85D"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="1cT-bu-n3P">
+                                <rect key="frame" x="331" y="217" width="59" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="🔥" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="PfZ-Ic-v2n">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" size="13" name="AppleColorEmoji"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="purgeCheckoutFolderWithSender:" target="XfG-lQ-9wD" id="rv6-Kj-8hl"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
                         <outlet property="assignedField" destination="sfI-fg-Pa5" id="4qc-z6-Xsb"/>
                         <outlet property="checkoutDirLabel" destination="jjG-dR-AyJ" id="ik3-NH-GQc"/>
+                        <outlet property="launchTerminalCheck" destination="hso-PZ-MfD" id="4aY-qI-EO5"/>
                         <outlet property="noPRsField" destination="i4U-0h-jRT" id="3Rp-UI-xtS"/>
                         <outlet property="personalAccessTokenField" destination="m6y-wg-cUt" id="k5j-PA-ACa"/>
                         <outlet property="pollingMinutesField" destination="zM1-Fk-rTQ" id="kvz-Fa-cQ7"/>

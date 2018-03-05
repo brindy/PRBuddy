@@ -102,7 +102,6 @@ class Git {
                 return
             }
             
-            progressHandler(Progress(command: commandString, exitStatus: exitStatus, description: command.description, finished: self.commands.isEmpty))
             self.next(progressHandler: progressHandler)
         }
         

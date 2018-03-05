@@ -8,11 +8,6 @@
 
 import Foundation
 
-// TODO open finder from notification
-// TODO open finder after checkout
-// TODO copy to pasteboard from notification
-// TODO copy to pasteboard after checkout
-
 class AppSettings {
     
     struct Defaults {
@@ -35,6 +30,7 @@ class AppSettings {
         static let repos = "repos"
         static let checkoutDir = "checkoutDir"
         static let xcodePath = "xcodePath"
+        static let launchTerminal = "launchTerminal"
         
     }
     
@@ -102,6 +98,17 @@ class AppSettings {
         }
         set {
             userDefaults.set(newValue == "" ? nil : newValue, forKey: Keys.personalAccessToken)
+            fireChanged()
+        }
+    }
+    
+    var launchTerminal: Bool {
+        get {
+            return userDefaults.bool(forKey: Keys.launchTerminal)
+        }
+        
+        set {
+            userDefaults.set(newValue, forKey: Keys.launchTerminal)
             fireChanged()
         }
     }
