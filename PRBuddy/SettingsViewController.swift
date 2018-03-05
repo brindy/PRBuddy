@@ -32,6 +32,10 @@ class SettingsViewController: NSViewController {
     
     let settings = AppSettings()
 
+    var window: NSWindow? {
+        return AppDelegate.instance.windowController.window
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -118,12 +122,14 @@ class SettingsViewController: NSViewController {
         validateButton.isEnabled = true
         
         if validating,
-            let error = AppDelegate.instance.polling.error {
-            
+            let error = AppDelegate.instance.polling.error,
+            let window = window {
+
+            dismissAllPresented()
             if presentedViewControllers?.isEmpty ?? true {
-//                let alert = NSAlert()
-//                alert.informativeText = "\(error)\nCheck your username and personal access token, then try again."
-//                alert.beginSheetModal(for: window)
+                let alert = NSAlert()
+                alert.informativeText = "\(error)\nCheck your username and personal access token, then try again."
+                alert.beginSheetModal(for: window)
             }
             
         }
@@ -140,13 +146,25 @@ class SettingsViewController: NSViewController {
         updateSettingsViews()
     }
     
+    func showMessage(_ message: String) {
+        dismissAllPresented()
+        
+        guard let window = window else { return }
+        
+        let alert = NSAlert()
+        alert.informativeText = message
+        alert.beginSheetModal(for: window)
+    }
+    
     func showAbout() {
-        // guard presentedViewControllers?.isEmpty ?? true else { return }
+        dismissAllPresented()
+        performSegue(withIdentifier: NSStoryboardSegue.Identifier("about"), sender: self)
+    }
+
+    private func dismissAllPresented() {
         for controller in presentedViewControllers ?? [] {
             controller.dismiss(self)
         }
-        
-        performSegue(withIdentifier: NSStoryboardSegue.Identifier("about"), sender: self)
     }
     
     private func updateSettingsViews() {

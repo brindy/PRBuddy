@@ -99,10 +99,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func showWindowInFront() {
-        windowController.close()
         windowController.window?.makeKeyAndOrderFront(self)
         windowController.window?.orderFrontRegardless()
         windowController.showWindow(self)
+        NSApplication.shared.activate(ignoringOtherApps: true)
     }
 
     @objc func quit() {
@@ -180,7 +180,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     @objc func aboutPRBuddy() {
         showWindowInFront()
         guard let controller = windowController.contentViewController as? SettingsViewController else { return }
-        // controller.showAbout()
+        controller.showAbout()
     }
     
     private func checkoutComplete(_ projectName: String, _ projectPath: String, _ progress: Git.Progress) {
@@ -193,7 +193,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         notification.subtitle = "Checkout \(projectName) complete"
 
         if progress.exitStatus != 0 {
-            notification.informativeText = "\(progress.description)\n\(projectPath)"
+            notification.informativeText = "\(progress.description)\n\n\(projectPath)"
         } else {
             notification.informativeText = projectPath
         }
@@ -235,8 +235,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         return menuItem
     }
     
-    private func showMessageWindow(message: String) {
-        print(#function, message)
+    private func showMessage(message: String) {
+        showWindowInFront()
+        guard let controller = windowController.contentViewController as? SettingsViewController else { return }
+        controller.showMessage(message)
     }
     
     class var instance: AppDelegate {
@@ -271,7 +273,7 @@ extension AppDelegate: NSUserNotificationCenterDelegate {
         } else {
             
             // Show the full informative text message
-            showMessageWindow(message: informativeText)
+            showMessage(message: informativeText)
             
         }
         

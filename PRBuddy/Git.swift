@@ -97,7 +97,7 @@ class Git {
         execute(command: command) { exitStatus, error in
             
             guard exitStatus == 0 else {
-                progressHandler(Progress(command: nil, exitStatus: exitStatus, description: "Error running command `git \(command.arguments.joined(separator: " "))`: \(error ?? "<unknown error>")", finished: true))
+                progressHandler(Progress(command: nil, exitStatus: exitStatus, description: "Error running command\n\ngit \(command.arguments.joined(separator: " "))\n\n\(error ?? "<unknown error>")", finished: true))
                 os_log("Git END, error %d", exitStatus)
                 return
             }
@@ -118,26 +118,21 @@ class Git {
         process.arguments = ["-C", command.dir ] + command.arguments
         process.standardError = errPipe
         process.terminationHandler = { process in
+            
+            let outdata = errPipe.fileHandleForReading.readDataToEndOfFile()
+            if var string = String(data: outdata, encoding: .utf8) {
+                string = string.trimmingCharacters(in: .newlines)
+                for line in string.components(separatedBy: "\n") {
+                    lastLine = line
+                }
+            }
+            
             completion(process.terminationStatus, lastLine)
         }
         
         os_log("> %@ %@", process.launchPath!, process.arguments!.joined(separator: " "))
         process.launch()
         
-        DispatchQueue.global(qos: .background).async {
-            for pipe in [errPipe] {
-                let outdata = pipe.fileHandleForReading.readDataToEndOfFile()
-                if var string = String(data: outdata, encoding: .utf8) {
-                    string = string.trimmingCharacters(in: .newlines)
-                    for line in string.components(separatedBy: "\n") {
-                        lastLine = line
-                    }
-                }
-            }
-            
-            process.waitUntilExit()
-        }
-
     }
     
 }

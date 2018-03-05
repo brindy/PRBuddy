@@ -17,7 +17,6 @@
 		85B9B90F204720E10086E994 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B9B90E204720E10086E994 /* AboutViewController.swift */; };
 		85B9B91020473B8D0086E994 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854527E2204098F700DFC643 /* Alamofire.framework */; };
 		85B9B912204743180086E994 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B9B911204743180086E994 /* Git.swift */; };
-		85FFE98F204DE5F70051395B /* Messaging.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 85FFE98E204DE5F70051395B /* Messaging.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -34,7 +33,6 @@
 		854527E52040E3B600DFC643 /* AddRepoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRepoViewController.swift; sourceTree = "<group>"; };
 		85B9B90E204720E10086E994 /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		85B9B911204743180086E994 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
-		85FFE98E204DE5F70051395B /* Messaging.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Messaging.storyboard; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -80,7 +78,6 @@
 				854527D3204048CF00DFC643 /* Main.storyboard */,
 				854527D7204048CF00DFC643 /* PRBuddy.entitlements */,
 				854527CF204048CF00DFC643 /* SettingsViewController.swift */,
-				85FFE98E204DE5F70051395B /* Messaging.storyboard */,
 			);
 			path = PRBuddy;
 			sourceTree = "<group>";
@@ -153,7 +150,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				85FFE98F204DE5F70051395B /* Messaging.storyboard in Resources */,
 				854527D2204048CF00DFC643 /* Assets.xcassets in Resources */,
 				854527D5204048CF00DFC643 /* Main.storyboard in Resources */,
 			);
