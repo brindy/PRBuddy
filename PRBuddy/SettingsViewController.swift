@@ -27,6 +27,8 @@ class SettingsViewController: NSViewController {
     @IBOutlet var removeRepoButton: NSButton!
 
     @IBOutlet var validationGoodLabel: NSTextField!
+
+    let validating = false
     
     let settings = AppSettings()
 
@@ -115,24 +117,23 @@ class SettingsViewController: NSViewController {
         validationProgress.stopAnimation(nil)
         validateButton.isEnabled = true
         
-        if let error = AppDelegate.instance.polling.error,
-            let window = AppDelegate.instance.windowController.window {
-            
-            if !window.isVisible {
-                AppDelegate.instance.showWindowInFront()
-            }
+        if validating,
+            let error = AppDelegate.instance.polling.error {
             
             if presentedViewControllers?.isEmpty ?? true {
-                let alert = NSAlert()
-                alert.informativeText = "\(error)\nCheck your username and personal access token, then try again."
-                alert.beginSheetModal(for: window)
+//                let alert = NSAlert()
+//                alert.informativeText = "\(error)\nCheck your username and personal access token, then try again."
+//                alert.beginSheetModal(for: window)
             }
             
+        }
+        
+        if AppDelegate.instance.polling.error != nil {
             validationGoodLabel.stringValue = "☹️"
         } else {
             validationGoodLabel.stringValue = "🙂"
         }
-        
+
     }
     
     @objc func onSettingsChanged() {
@@ -140,7 +141,11 @@ class SettingsViewController: NSViewController {
     }
     
     func showAbout() {
-        guard presentedViewControllers?.isEmpty ?? true else { return }
+        // guard presentedViewControllers?.isEmpty ?? true else { return }
+        for controller in presentedViewControllers ?? [] {
+            controller.dismiss(self)
+        }
+        
         performSegue(withIdentifier: NSStoryboardSegue.Identifier("about"), sender: self)
     }
     

@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import os.log
 
 class Git {
     
@@ -77,12 +78,14 @@ class Git {
     }
     
     func start(withProgressHandler handler: @escaping (Progress) -> ()) {
+        os_log("Git START")
         next(progressHandler: handler)
     }
     
     private func next(progressHandler: @escaping (Progress) -> ()) {
         guard let command = commands.first else {
             progressHandler(Progress(command: nil, exitStatus: nil, description: "Done", finished: true))
+            os_log("Git END")
             return
         }
         
@@ -91,30 +94,50 @@ class Git {
         let commandString = command.arguments.joined(separator: " ")
         progressHandler(Progress(command: commandString, exitStatus: nil, description: command.description, finished: false))
 
-        execute(command: command) { exitStatus in
+        execute(command: command) { exitStatus, error in
+            
+            guard exitStatus == 0 else {
+                progressHandler(Progress(command: nil, exitStatus: exitStatus, description: "Error running command `git \(command.arguments.joined(separator: " "))`: \(error ?? "<unknown error>")", finished: true))
+                os_log("Git END, error %d", exitStatus)
+                return
+            }
+            
             progressHandler(Progress(command: commandString, exitStatus: exitStatus, description: command.description, finished: self.commands.isEmpty))
             self.next(progressHandler: progressHandler)
         }
         
     }
     
-    private func execute(command: Command, completion: @escaping (Int32) -> ()) {
-        
+    private func execute(command: Command, completion: @escaping (Int32, String?) -> ()) {
+        var lastLine: String?
+
+        let errPipe = Pipe()
+
         let process = Process()
         process.launchPath = "\(gitPath)Contents/Developer/usr/bin/git"
         process.arguments = ["-C", command.dir ] + command.arguments
+        process.standardError = errPipe
         process.terminationHandler = { process in
-            completion(process.terminationStatus)
+            completion(process.terminationStatus, lastLine)
         }
         
-        print("> \(process.launchPath!) \(process.arguments!.joined(separator: " "))")
-        do {
-           try process.run()
-        } catch {
-            print(#function, error.localizedDescription)
-            completion(-1)
-        }
+        os_log("> %@ %@", process.launchPath!, process.arguments!.joined(separator: " "))
+        process.launch()
         
+        DispatchQueue.global(qos: .background).async {
+            for pipe in [errPipe] {
+                let outdata = pipe.fileHandleForReading.readDataToEndOfFile()
+                if var string = String(data: outdata, encoding: .utf8) {
+                    string = string.trimmingCharacters(in: .newlines)
+                    for line in string.components(separatedBy: "\n") {
+                        lastLine = line
+                    }
+                }
+            }
+            
+            process.waitUntilExit()
+        }
+
     }
     
 }

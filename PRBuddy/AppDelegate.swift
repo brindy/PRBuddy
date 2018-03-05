@@ -99,9 +99,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func showWindowInFront() {
-        windowController.showWindow(nil)
-        windowController.window?.makeKeyAndOrderFront(nil)
+        windowController.close()
+        windowController.window?.makeKeyAndOrderFront(self)
         windowController.window?.orderFrontRegardless()
+        windowController.showWindow(self)
     }
 
     @objc func quit() {
@@ -109,12 +110,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func openPullRequestURL(sender: PullRequestMenuItem) {
-        print(#function, sender)
         NSWorkspace.shared.open(URL(string: sender.pr.html_url)!)
     }
     
     @objc func checkNow(sender: Any) {
-        print(#function, sender)
         resetStatus()
         polling.stop()
         polling.start()
@@ -122,7 +121,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func checkoutPullRequest(sender: PullRequestMenuItem) {
-        print(#function, sender)
         
         guard let xcodePath = settings.xcodePath else { return }
         guard let checkoutDir = settings.checkoutDir else { return }
@@ -148,8 +146,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             .checkout(branch: headBranchName, fromRef: sender.pr.base.ref)
             .pull(repoUrl: sender.pr.head.repo.clone_url, branch: sender.pr.head.ref)
             .start { progress in
-        
-                print(#function, progress)
                 
                 self.lastProgress = progress
                 
@@ -157,8 +153,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     guard progress.finished else { return }
 
                     self.stopCheckoutProgress()
-                    
-                    print(#function, "Git finished")
                     
                     self.lastProgress = nil
                     self.resetStatus()
@@ -168,7 +162,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     let projectDir = tmpCheckoutDir.appendingPathComponent(projectName)
                     let projectPath = String(projectDir.absoluteString.dropFirst("file://".count))
 
-                    self.checkoutComplete(projectPath)
+                    self.checkoutComplete(projectName, projectPath, progress)
                     
                     xcodePath.stopAccessingSecurityScopedResource()
                     checkoutDir.stopAccessingSecurityScopedResource()
@@ -180,26 +174,30 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     @objc func ignorePullRequest(sender: PullRequestMenuItem) {
-        print(#function, sender)
         // TODO keep track of requests we're not interested in
     }
 
     @objc func aboutPRBuddy() {
         showWindowInFront()
         guard let controller = windowController.contentViewController as? SettingsViewController else { return }
-        controller.showAbout()
+        // controller.showAbout()
     }
     
-    private func checkoutComplete(_ projectPath: String) {
+    private func checkoutComplete(_ projectName: String, _ projectPath: String, _ progress: Git.Progress) {
         NSPasteboard.general.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
-        let pasteboardResult = NSPasteboard.general.setString(projectPath, forType: NSPasteboard.PasteboardType.fileURL)
-        print(#function, "pasteboardResult", pasteboardResult)
+        _ = NSPasteboard.general.setString(projectPath, forType: NSPasteboard.PasteboardType.fileURL)
         
         let notification = NSUserNotification()
         notification.identifier = UUID().uuidString
         notification.title = "PRBuddy"
-        notification.subtitle = "Checkout complete"
-        notification.informativeText = projectPath
+        notification.subtitle = "Checkout \(projectName) complete"
+
+        if progress.exitStatus != 0 {
+            notification.informativeText = "\(progress.description)\n\(projectPath)"
+        } else {
+            notification.informativeText = projectPath
+        }
+        
         NSUserNotificationCenter.default.deliver(notification)
     }
 
@@ -230,11 +228,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         menuItem.submenu?.addItem(PullRequestMenuItem(title: "Open in Browser", action: #selector(self.openPullRequestURL), pr: pr))
         menuItem.submenu?.addItem(PullRequestMenuItem(title: "Checkout...", action: #selector(self.checkoutPullRequest), pr: pr))
         
-        if prefix == settings.reviewRequested {
-            menuItem.submenu?.addItem(PullRequestMenuItem(title: "Ignore", action: #selector(self.ignorePullRequest), pr: pr))
-        }
+//        if prefix == settings.reviewRequested {
+//            menuItem.submenu?.addItem(PullRequestMenuItem(title: "Ignore", action: #selector(self.ignorePullRequest), pr: pr))
+//        }
         
         return menuItem
+    }
+    
+    private func showMessageWindow(message: String) {
+        print(#function, message)
     }
     
     class var instance: AppDelegate {
@@ -248,30 +250,35 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 extension AppDelegate: NSUserNotificationCenterDelegate {
     
     func userNotificationCenter(_ center: NSUserNotificationCenter, didDeliver notification: NSUserNotification) {
-        print(#function, notification)
     }
     
     func userNotificationCenter(_ center: NSUserNotificationCenter, didActivate notification: NSUserNotification) {
-        print(#function, notification)
         
-        guard let path = notification.informativeText else { return }
-        print(#function, "path", path)
+        guard let informativeText = notification.informativeText else { return }
         
-        NSPasteboard.general.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
-        let pasteboardResult = NSPasteboard.general.setString(path, forType: NSPasteboard.PasteboardType.fileURL)
-        print(#function, "pasteboardResult", pasteboardResult)
-        
-        
-        if let url = settings.checkoutDir,
-            url.startAccessingSecurityScopedResource() {
-            NSWorkspace.shared.openFile(path, withApplication: "Terminal")
-            url.stopAccessingSecurityScopedResource()
+        if informativeText.starts(with: "/") {
+            let path = informativeText
+            
+            NSPasteboard.general.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
+            _ = NSPasteboard.general.setString(path, forType: NSPasteboard.PasteboardType.fileURL)
+            
+            if let url = settings.checkoutDir,
+                url.startAccessingSecurityScopedResource() {
+                NSWorkspace.shared.openFile(path, withApplication: "Terminal")
+                url.stopAccessingSecurityScopedResource()
+            }
+            
+        } else {
+            
+            // Show the full informative text message
+            showMessageWindow(message: informativeText)
+            
         }
+        
         
     }
     
     func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
-        print(#function, notification)
         return true
     }
     

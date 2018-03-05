@@ -8,6 +8,7 @@
 
 import Foundation
 import Alamofire
+import os.log
 
 class GithubPolling {
     
@@ -109,7 +110,7 @@ class GithubPolling {
     }
     
     func pollNow() {
-        print(#function)
+        os_log("polling")
         error = nil
         allPullRequests = []
         firePollingStarted()
@@ -122,15 +123,21 @@ class GithubPolling {
     func loadPullRequests() {
         
         guard !settings.repos.isEmpty else {
+            os_log("Polling finished, no repos specified")
             firePollingFinished()
             return
         }
 
         for repo in settings.repos {
-            let url = URL(string: "https://api.github.com/repos/\(repo)/pulls")!
+            guard let url = URL(string: "https://api.github.com/repos/\(repo)/pulls") else {
+                os_log("invalid repo", repo)
+                continue
+            }
+            
             var request = URLRequest(url: url, cachePolicy: .reloadIgnoringLocalCacheData, timeoutInterval: 10.0)
             request.addValue(settings.basicAuthorization(), forHTTPHeaderField: "Authorization")
 
+            os_log("Polling started, %@", url.absoluteString)
             Alamofire.request(request)
                 .validate(statusCode: 200..<300)
                 .responseData() { response in
@@ -138,7 +145,7 @@ class GithubPolling {
                         self.error("Failed to retrieve pull requests for \(repo).")
                         return
                     }
-                    self.parsePullRequestList(data)
+                    self.parsePullRequestList(url, data)
             }
             
             guard error == nil else { return }
@@ -147,7 +154,7 @@ class GithubPolling {
         
     }
     
-    func parsePullRequestList(_ data: Data) {
+    func parsePullRequestList(_ url: URL, _ data: Data) {
         
         guard let list = try? JSONDecoder().decode(Array<GithubPullRequest>.self, from: data) else {
             error("Failed to parse pull request list JSON.")
@@ -161,12 +168,13 @@ class GithubPolling {
             }
         }
 
+        os_log("Polling finished, pull request list processed for %@", url.absoluteString )
         firePollingFinished()
     }
 
     private func error(_ message: String) {
+        os_log("Polling error: %@", message)
         guard error == nil else { return }
-        print("ERROR: ", error as Any)
         error = message
         firePollingFinished()
     }

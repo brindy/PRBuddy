@@ -16,7 +16,6 @@ class AddRepoViewController: NSViewController {
     let settings = AppSettings()
     
     @IBAction func addRepo(sender: Any) {
-        print(#function)
         settings.repos.append(repoField.stringValue)
         AppDelegate.instance.polling.pollNow()
         dismiss(self)
