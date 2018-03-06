@@ -271,6 +271,12 @@ extension AppDelegate: NSUserNotificationCenterDelegate {
                 NSWorkspace.shared.openFile(path, withApplication: "Terminal")
                 url.stopAccessingSecurityScopedResource()
             }
+
+            item.button?.title = "Path copied to pasteboard"
+            
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                self.updateStatus()
+            }
             
         } else {
             
@@ -278,8 +284,7 @@ extension AppDelegate: NSUserNotificationCenterDelegate {
             showMessage(message: informativeText)
             
         }
-        
-        
+
     }
     
     func userNotificationCenter(_ center: NSUserNotificationCenter, shouldPresent notification: NSUserNotification) -> Bool {
