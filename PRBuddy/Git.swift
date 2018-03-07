@@ -73,7 +73,7 @@ class Git {
     }
     
     func pull(repoUrl: String, branch: String) -> Git {
-        commands.append(Command(dir: projectPath, arguments: [ "pull",  repoUrl, branch ], description: "Pulling"))
+        commands.append(Command(dir: projectPath, arguments: [ "pull",  repoUrl, branch, "--squash" ], description: "Pulling"))
         return self
     }
     
@@ -130,7 +130,12 @@ class Git {
         }
         
         os_log("> %@ %@", process.launchPath!, process.arguments!.joined(separator: " "))
-        process.launch()
+        do {
+            try process.run()
+        } catch {
+            print(error)
+            completion(-1, "Failed to run command")
+        }
         
     }
     

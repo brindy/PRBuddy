@@ -122,7 +122,9 @@ class SettingsViewController: NSViewController {
 
         alert.beginSheetModal(for: window) { response in
             guard response == .alertSecondButtonReturn else { return }
-            self.purge()
+            DispatchQueue.global(qos: .background).async {
+                self.purge()
+            }
         }
         
     }
