@@ -14,7 +14,6 @@ class GithubPolling {
     
     struct Notifications {
         
-        static let reviewsRequested = Notification.Name("GithubPolling.reviewsRequested")
         static let pollingStarted = Notification.Name("GithubPolling.pollingStarted")
         static let pollingFinished = Notification.Name("GithubPolling.pollingFinished")
 
@@ -87,12 +86,6 @@ class GithubPolling {
     private var timer:Timer?
 
     init() {
-        NotificationCenter.default.addObserver(self, selector: #selector(self.onSettingsChanged), name: AppSettings.Notifications.changed, object: nil)
-        start()
-    }
-    
-    @objc func onSettingsChanged() {
-        stop()
         start()
     }
     
@@ -104,6 +97,7 @@ class GithubPolling {
     func start() {
         stop()
         guard settings.username != nil, settings.personalAccessToken != nil else { return }
+        guard settings.pollingTime > 0 else { return }
         self.timer = Timer.scheduledTimer(withTimeInterval: Double(self.settings.pollingTime) * 60.0, repeats: true) { timer in
             self.pollNow()
         }
@@ -164,7 +158,6 @@ class GithubPolling {
         for pullRequest in list {
             if pullRequest.state != "closed" {
                 allPullRequests.insert(pullRequest)
-                fireReviewsRequested()
             }
         }
 
@@ -179,12 +172,6 @@ class GithubPolling {
         firePollingFinished()
     }
     
-    private func fireReviewsRequested() {
-        DispatchQueue.main.async {
-            NotificationCenter.default.post(name: Notifications.reviewsRequested, object: nil)
-        }
-    }
-
     private func firePollingStarted() {
         DispatchQueue.main.async {
             NotificationCenter.default.post(name: Notifications.pollingStarted, object: nil)

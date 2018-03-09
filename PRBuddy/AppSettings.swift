@@ -34,12 +34,6 @@ class AppSettings {
         
     }
     
-    struct Notifications {
-        
-        static let changed = NSNotification.Name(rawValue: "AppSettings.Changed")
-        
-    }
-
     private var userDefaults: UserDefaults = UserDefaults.standard
     
     var reviewRequested: String {
@@ -48,7 +42,6 @@ class AppSettings {
         }
         set {
             userDefaults.set(newValue, forKey: Keys.reviewRequested)
-            fireChanged()
         }
     }
 
@@ -58,7 +51,6 @@ class AppSettings {
         }
         set {
             userDefaults.set(newValue, forKey: Keys.assigned)
-            fireChanged()
         }
     }
 
@@ -68,7 +60,6 @@ class AppSettings {
         }
         set {
             userDefaults.set(newValue, forKey: Keys.noPRs)
-            fireChanged()
         }
     }
     
@@ -78,7 +69,6 @@ class AppSettings {
         }
         set {
             userDefaults.set(newValue, forKey: Keys.pollingTime)
-            fireChanged()
         }
     }
     
@@ -88,7 +78,6 @@ class AppSettings {
         }
         set {
             userDefaults.set(newValue == "" ? nil : newValue, forKey: Keys.username)
-            fireChanged()
         }
     }
     
@@ -98,7 +87,6 @@ class AppSettings {
         }
         set {
             userDefaults.set(newValue == "" ? nil : newValue, forKey: Keys.personalAccessToken)
-            fireChanged()
         }
     }
     
@@ -109,7 +97,6 @@ class AppSettings {
         
         set {
             userDefaults.set(newValue, forKey: Keys.launchTerminal)
-            fireChanged()
         }
     }
     
@@ -121,7 +108,6 @@ class AppSettings {
             let set = Set<String>(newValue)
             let array = Array<String>(set)
             userDefaults.set(array, forKey: Keys.repos)
-            fireChanged()
         }
     }
     
@@ -131,13 +117,11 @@ class AppSettings {
             guard let data = userDefaults.data(forKey: Keys.checkoutDir) else { return nil}
             var isStale = false
             guard let url = try? URL(resolvingBookmarkData: data, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) else { return nil }
-            // guard url?.startAccessingSecurityScopedResource() ?? false else { return nil }
             return url
         }
         set {
             let data = try? newValue?.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
             userDefaults.set(data as Any, forKey: Keys.checkoutDir)
-            fireChanged()
         }
     }
 
@@ -153,12 +137,7 @@ class AppSettings {
         set {
             let data = try? newValue?.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
             userDefaults.set(data as Any, forKey: Keys.xcodePath)
-            fireChanged()
         }
     }
 
-    private func fireChanged() {
-        NotificationCenter.default.post(name: Notifications.changed, object: nil)
-    }
-    
 }

@@ -41,9 +41,6 @@ class SettingsViewController: NSViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        NotificationCenter.default.addObserver(self, selector: #selector(self.onSettingsChanged), name: AppSettings.Notifications.changed, object: nil)
-        
-        NotificationCenter.default.addObserver(self, selector: #selector(self.onReviewsRequestedChanged), name: GithubPolling.Notifications.reviewsRequested, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.onPollingStarted), name: GithubPolling.Notifications.pollingStarted, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.onPollingFinished), name: GithubPolling.Notifications.pollingFinished, object: nil)
 
@@ -53,6 +50,8 @@ class SettingsViewController: NSViewController {
     @IBAction func validate(sender: Any) {
         print(#function)
         validationGoodLabel.stringValue = ""
+        AppDelegate.instance.polling.stop()
+        AppDelegate.instance.polling.start()
         AppDelegate.instance.polling.pollNow()
         AppDelegate.instance.updateStatus()
     }
@@ -131,10 +130,6 @@ class SettingsViewController: NSViewController {
     
     @IBAction func launchTerminalValueChanged(sender: Any) {
         settings.launchTerminal = launchTerminalCheck.integerValue > 0
-    }
-    
-    @objc func onReviewsRequestedChanged() {
-        AppDelegate.instance.updateStatus()
     }
     
     @objc func onPollingStarted() {
@@ -265,12 +260,27 @@ extension SettingsViewController: NSTextFieldDelegate {
     override func controlTextDidChange(_ obj: Notification) {
         
         settings.username = usernameField.stringValue
-        settings.personalAccessToken = personalAccessTokenField.stringValue
         settings.noPRs = noPRsField.stringValue
         settings.reviewRequested = reviewRequestedField.stringValue
-        settings.pollingTime = pollingMinutesField.integerValue
         validationGoodLabel.stringValue = ""
+
+        var shouldValidate = false
         
+        let newPollingTime = pollingMinutesField.integerValue
+        if settings.pollingTime != newPollingTime {
+            settings.pollingTime = newPollingTime
+            shouldValidate = true
+        }
+        
+        let newPersonalAccessToken = personalAccessTokenField.stringValue
+        if settings.personalAccessToken != newPersonalAccessToken {
+            settings.personalAccessToken = newPersonalAccessToken
+            shouldValidate = true
+        }
+        
+        if shouldValidate {
+            validate(sender: self)
+        }
     }
     
 }

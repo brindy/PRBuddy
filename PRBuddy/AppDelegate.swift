@@ -7,6 +7,7 @@
 //
 
 import Cocoa
+import os
 
 @NSApplicationMain
 class AppDelegate: NSObject, NSApplicationDelegate {
@@ -21,7 +22,9 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     var progressTimer: Timer?
     
     func applicationDidFinishLaunching(_ aNotification: Notification) {
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.onPollingStarted), name: GithubPolling.Notifications.pollingStarted, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.onPollingFinished), name: GithubPolling.Notifications.pollingFinished, object: nil)
+
         let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
         windowController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Main")) as? NSWindowController
 
@@ -36,6 +39,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         } else {
             polling.pollNow()
         }
+        
     }
     
     func updateStatus() {
@@ -63,39 +67,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         item.button?.title = "\(settings.noPRs) \(polling.allPullRequests.count)"
         item.button?.sizeToFit()
     }
-    
-    func buildMenu() {
-        let menu = NSMenu()
 
-        menu.addItem(NSMenuItem(title: "About PRBuddy", action: #selector(self.aboutPRBuddy), keyEquivalent: ""))
-        menu.addItem(NSMenuItem(title: "Check now", action: #selector(self.checkNow), keyEquivalent: ""))
-        menu.addItem(NSMenuItem.separator())
+    @objc func onPollingStarted() {
+        os_log(#function)
+        item.button?.title = "⚙️"
+    }
 
-        if polling.allPullRequests.count > 0 {
-            let requested = polling.reviewsRequested
-            let assigned = polling.assigned
-            
-            let others = polling.allPullRequests.subtracting(requested).subtracting(assigned)
-            
-            for pr in requested.sorted(by: { $0.repoName < $1.repoName }) {
-                menu.addItem(createPRMenuItem(pr: pr, prefix: settings.reviewRequested))
-            }
-            
-            for pr in assigned.sorted(by: { $0.repoName < $1.repoName }) {
-                menu.addItem(createPRMenuItem(pr: pr, prefix: settings.assigned))
-            }
-            
-            for pr in others.sorted(by: { $0.repoName < $1.repoName }) {
-                menu.addItem(createPRMenuItem(pr: pr, prefix: ""))
-            }
-            
-            menu.addItem(NSMenuItem.separator())
-        }
-        
-        menu.addItem(NSMenuItem(title: "Settings", action: #selector(self.showWindowInFront), keyEquivalent: ""))
-        menu.addItem(NSMenuItem.separator())
-        menu.addItem(NSMenuItem(title: "Quit", action: #selector(self.quit), keyEquivalent: ""))
-        item.menu = menu
+    @objc func onPollingFinished() {
+        os_log(#function)
+        AppDelegate.instance.updateStatus()
     }
     
     @objc func showWindowInFront() {
@@ -114,7 +94,6 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     @objc func checkNow(sender: Any) {
-        resetStatus()
         polling.stop()
         polling.start()
         polling.pollNow()
@@ -239,6 +218,40 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         showWindowInFront()
         guard let controller = windowController.contentViewController as? SettingsViewController else { return }
         controller.showMessage(message)
+    }
+    
+    private func buildMenu() {
+        let menu = NSMenu()
+        
+        menu.addItem(NSMenuItem(title: "About PRBuddy", action: #selector(self.aboutPRBuddy), keyEquivalent: ""))
+        menu.addItem(NSMenuItem(title: "Check now", action: #selector(self.checkNow), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
+        
+        if polling.allPullRequests.count > 0 {
+            let requested = polling.reviewsRequested
+            let assigned = polling.assigned
+            
+            let others = polling.allPullRequests.subtracting(requested).subtracting(assigned)
+            
+            for pr in requested.sorted(by: { $0.repoName < $1.repoName }) {
+                menu.addItem(createPRMenuItem(pr: pr, prefix: settings.reviewRequested))
+            }
+            
+            for pr in assigned.sorted(by: { $0.repoName < $1.repoName }) {
+                menu.addItem(createPRMenuItem(pr: pr, prefix: settings.assigned))
+            }
+            
+            for pr in others.sorted(by: { $0.repoName < $1.repoName }) {
+                menu.addItem(createPRMenuItem(pr: pr, prefix: ""))
+            }
+            
+            menu.addItem(NSMenuItem.separator())
+        }
+        
+        menu.addItem(NSMenuItem(title: "Settings", action: #selector(self.showWindowInFront), keyEquivalent: ""))
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(NSMenuItem(title: "Quit", action: #selector(self.quit), keyEquivalent: ""))
+        item.menu = menu
     }
     
     class var instance: AppDelegate {
