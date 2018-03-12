@@ -102,7 +102,7 @@ class AppSettings {
     
     var repos: [String] {
         get {
-            return userDefaults.array(forKey: Keys.repos) as? [String] ?? []
+            return (userDefaults.array(forKey: Keys.repos) as? [String] ?? []).sorted()
         }
         set {
             let set = Set<String>(newValue)

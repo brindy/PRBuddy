@@ -8,16 +8,24 @@
 
 import Cocoa
 
+protocol AddRepoViewControllerDelegate: class {
+    
+    func repoAdded(controller: AddRepoViewController)
+    
+}
+
 class AddRepoViewController: NSViewController {
     
     @IBOutlet var repoField: NSTextField!
     @IBOutlet var addButton: NSButton!
+    
+    weak var delegate: AddRepoViewControllerDelegate?
 
     let settings = AppSettings()
     
     @IBAction func addRepo(sender: Any) {
         settings.repos.append(repoField.stringValue)
-        AppDelegate.instance.polling.pollNow()
+        delegate?.repoAdded(controller: self)
         dismiss(self)
     }
     

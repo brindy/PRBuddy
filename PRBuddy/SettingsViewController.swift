@@ -47,6 +47,12 @@ class SettingsViewController: NSViewController {
         updateSettingsViews()
     }
     
+    override func prepare(for segue: NSStoryboardSegue, sender: Any?) {
+        if let controller = segue.destinationController as? AddRepoViewController {
+            controller.delegate = self
+        }
+    }
+    
     @IBAction func validate(sender: Any) {
         print(#function)
         validationGoodLabel.stringValue = ""
@@ -59,6 +65,7 @@ class SettingsViewController: NSViewController {
     @IBAction func removeRepo(sender: Any) {
         print(#function)
         settings.repos.remove(at: reposOutlineView.selectedRow)
+        reposOutlineView.reloadData()
         removeRepoButton.isEnabled = false
         AppDelegate.instance.polling.pollNow()
     }
@@ -219,6 +226,15 @@ class SettingsViewController: NSViewController {
         checkoutDirLabel.stringValue = String(settings.checkoutDir?.absoluteString.dropFirst("file://".count) ?? "<none selected>")
         xcodePathLabel.stringValue = String(settings.xcodePath?.absoluteString.dropFirst("file://".count) ?? "<none selected>")
         launchTerminalCheck.integerValue = settings.launchTerminal ? 1 : 0
+    }
+    
+}
+
+extension SettingsViewController: AddRepoViewControllerDelegate {
+    
+    func repoAdded(controller: AddRepoViewController) {
+        reposOutlineView.reloadData()
+        validate(sender: self)
     }
     
 }
