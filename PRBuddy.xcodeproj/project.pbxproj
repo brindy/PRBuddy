@@ -318,7 +318,7 @@
 				CODE_SIGN_ENTITLEMENTS = PRBuddy/PRBuddy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = GT88B9R292;
+				DEVELOPMENT_TEAM = EVNNUL2F2G;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",
@@ -338,7 +338,7 @@
 				CODE_SIGN_ENTITLEMENTS = PRBuddy/PRBuddy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
-				DEVELOPMENT_TEAM = GT88B9R292;
+				DEVELOPMENT_TEAM = EVNNUL2F2G;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
 					"$(PROJECT_DIR)/Carthage/Build/Mac",

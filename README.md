@@ -8,7 +8,7 @@ A simple utility for working with Github PRs.
 
 After checking out the code run:
 
-`carthage update --platform macOS`
+`carthage update -platform macOS`
 
 Then open the XCode project and build/run from there.
 
