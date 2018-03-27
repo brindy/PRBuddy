@@ -87,6 +87,7 @@ class SettingsViewController: NSViewController {
             guard result == NSApplication.ModalResponse.OK else { return }
             guard let url = openPanel.url else { return }
             self.settings.checkoutDir = url
+            self.updateSettingsViews()
         }
         
     }
@@ -103,7 +104,12 @@ class SettingsViewController: NSViewController {
         openPanel.begin { result in
             guard result == NSApplication.ModalResponse.OK else { return }
             guard let url = openPanel.url else { return }
+            guard Git.validPath(xcodePath: url) else {
+                self.showMessage("Could not find git, please choose an Xcode installation")
+                return
+            }
             self.settings.xcodePath = url
+            self.updateSettingsViews()
         }
 
     }

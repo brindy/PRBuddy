@@ -34,6 +34,10 @@ class Git {
     let checkoutDir: URL
     let project: String
 
+    static func validPath(xcodePath: URL) -> Bool {
+        return FileManager.default.fileExists(atPath: xcodePath.git)
+    }
+    
     init(xcodePath: URL, checkoutDir: URL, project: String) {
         self.xcodePath = xcodePath
         self.checkoutDir = checkoutDir
@@ -46,10 +50,6 @@ class Git {
     
     var projectPath: String {
         return "\(checkoutPath)/\(project)"
-    }
-    
-    var gitPath: String {
-        return String(xcodePath.absoluteString.dropFirst("file://".count))
     }
     
     func clone(url: String) -> Git {
@@ -113,7 +113,7 @@ class Git {
         let errPipe = Pipe()
 
         let process = Process()
-        process.launchPath = "\(gitPath)Contents/Developer/usr/bin/git"
+        process.launchPath = xcodePath.git
         process.arguments = ["-C", command.dir ] + command.arguments
         process.standardError = errPipe
         process.terminationHandler = { process in
@@ -140,3 +140,15 @@ class Git {
     }
     
 }
+
+fileprivate extension URL {
+    
+    static let gitExecutable = "Contents/Developer/usr/bin/git"
+    
+    var git: String {
+        let gitPath = String(absoluteString.dropFirst("file://".count))
+        return "\(gitPath)/\(URL.gitExecutable)"
+    }
+    
+}
+
