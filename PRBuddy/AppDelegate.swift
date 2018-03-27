@@ -201,7 +201,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
     
     private func createPRMenuItem(pr: GithubPolling.GithubPullRequest, prefix: String) -> PullRequestMenuItem {
-        let title = "\(prefix)\(pr.repoName): \(pr.title)"
+        let title = "\(prefix) \(pr.repoName): \(pr.title)"
         let menuItem = PullRequestMenuItem(title: title, action: #selector(self.openPullRequestURL), pr: pr)
         menuItem.submenu = NSMenu(title: "Actions")
         menuItem.submenu?.addItem(PullRequestMenuItem(title: "Open in Browser", action: #selector(self.openPullRequestURL), pr: pr))
