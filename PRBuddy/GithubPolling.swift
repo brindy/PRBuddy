@@ -123,8 +123,8 @@ class GithubPolling {
         }
 
         for repo in settings.repos {
-            guard let url = URL(string: "https://api.github.com/repos/\(repo)/pulls") else {
-                os_log("invalid repo", repo)
+            guard let url = URL(string: "https://api.github.com/repos/\(repo.githubPath)/pulls") else {
+                os_log("invalid repo", repo.githubPath)
                 continue
             }
             

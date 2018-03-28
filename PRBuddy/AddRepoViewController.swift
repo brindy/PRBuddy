@@ -24,7 +24,7 @@ class AddRepoViewController: NSViewController {
     let settings = AppSettings()
     
     @IBAction func addRepo(sender: Any) {
-        settings.repos.append(repoField.stringValue)
+        settings.repos.append(AppSettings.Repo(githubPath: repoField.stringValue, postCheckoutCommand: "", checkoutFolder: nil))
         delegate?.repoAdded(controller: self)
         dismiss(self)
     }

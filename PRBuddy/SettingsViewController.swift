@@ -27,6 +27,7 @@ class SettingsViewController: NSViewController {
 
     @IBOutlet var reposOutlineView: NSOutlineView!
     @IBOutlet var removeRepoButton: NSButton!
+    @IBOutlet var repoSettingsButton: NSButton!
 
     @IBOutlet var validationGoodLabel: NSTextField!
 
@@ -61,12 +62,13 @@ class SettingsViewController: NSViewController {
         AppDelegate.instance.polling.pollNow()
         AppDelegate.instance.updateStatus()
     }
-
+    
     @IBAction func removeRepo(sender: Any) {
         print(#function)
         settings.repos.remove(at: reposOutlineView.selectedRow)
         reposOutlineView.reloadData()
         removeRepoButton.isEnabled = false
+        repoSettingsButton.isEnabled = false
         AppDelegate.instance.polling.pollNow()
     }
 
@@ -261,6 +263,7 @@ extension SettingsViewController: NSOutlineViewDelegate {
     
     func outlineViewSelectionDidChange(_ notification: Notification) {
         removeRepoButton.isEnabled = reposOutlineView.selectedRow != -1
+        repoSettingsButton.isEnabled = reposOutlineView.selectedRow != -1
     }
     
 }
@@ -269,8 +272,9 @@ extension SettingsViewController: NSOutlineViewDataSource {
     
     func outlineView(_ outlineView: NSOutlineView, viewFor tableColumn: NSTableColumn?, item: Any) -> NSView? {
         let view = outlineView.makeView(withIdentifier: NSUserInterfaceItemIdentifier("DataCell"), owner: self) as? NSTableCellView
-        if let textField = view?.textField {
-            textField.stringValue = item as! String
+        if let textField = view?.textField,
+            let repo = item as? AppSettings.Repo {
+            textField.stringValue = repo.githubPath
         }
         return view
     }

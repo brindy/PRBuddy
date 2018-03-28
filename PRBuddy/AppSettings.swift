@@ -10,6 +10,14 @@ import Foundation
 
 class AppSettings {
     
+    struct Repo {
+        
+        let githubPath: String
+        let postCheckoutCommand: String
+        let checkoutFolder: URL?
+        
+    }
+    
     struct Defaults {
         
         static let assigned = "✍️"
@@ -28,6 +36,8 @@ class AppSettings {
         static let assigned = "assigned"
         static let pollingTime = "pollingTime"
         static let repos = "repos"
+        static let repoCommand = "command"
+        static let repoCheckoutFolder = "checkoutFolder"
         static let checkoutDir = "checkoutDir"
         static let xcodePath = "xcodePath"
         static let launchTerminal = "launchTerminal"
@@ -100,44 +110,89 @@ class AppSettings {
         }
     }
     
-    var repos: [String] {
+    var repos: [Repo] {
         get {
-            return (userDefaults.array(forKey: Keys.repos) as? [String] ?? []).sorted()
+            guard let repoPaths = userDefaults.array(forKey: Keys.repos) as? [String] else { return [] }
+            
+            var repos = [Repo]()
+            for repoPath in repoPaths {
+                
+                repos.append(Repo(githubPath: repoPath,
+                                  postCheckoutCommand: userDefaults.string(forKey: repoPath.commandKey) ?? "",
+                                  checkoutFolder: userDefaults.secureUrl(forKey: repoPath.checkoutFolderKey)))
+
+            }
+            
+            return repos.sorted(by: { $0.githubPath > $1.githubPath })
         }
         set {
-            let set = Set<String>(newValue)
-            let array = Array<String>(set)
-            userDefaults.set(array, forKey: Keys.repos)
+            
+            if let oldRepoPaths = userDefaults.array(forKey: Keys.repos) as? [String] {
+                for repoPath in oldRepoPaths {
+                    userDefaults.removeObject(forKey: repoPath.commandKey)
+                    userDefaults.removeObject(forKey: repoPath.checkoutFolderKey)
+                }
+            }
+            
+            var repoPaths = [String]()
+            for repo in newValue {
+                let repoPath = repo.githubPath
+                repoPaths.append(repoPath)
+                userDefaults.set(repo.postCheckoutCommand, forKey: repoPath.commandKey)
+                userDefaults.set(repo.checkoutFolder, forKey: repoPath.checkoutFolderKey)
+            }
+            userDefaults.set(repoPaths, forKey: Keys.repos)
+            
         }
     }
     
     // Call #startAccessingSecurityScopedResource before and #stopAccessingSecurityScopedResource after using this URL
     var checkoutDir: URL? {
         get {
-            guard let data = userDefaults.data(forKey: Keys.checkoutDir) else { return nil}
-            var isStale = false
-            guard let url = try? URL(resolvingBookmarkData: data, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) else { return nil }
-            return url
+            return userDefaults.url(forKey: Keys.checkoutDir)
         }
         set {
-            let data = try? newValue?.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
-            userDefaults.set(data as Any, forKey: Keys.checkoutDir)
+            userDefaults.set(secureUrl: newValue, forKey: Keys.checkoutDir)
         }
     }
 
     // Call #startAccessingSecurityScopedResource before and #stopAccessingSecurityScopedResource after using this URL
     var xcodePath: URL? {
         get {
-            guard let data = userDefaults.data(forKey: Keys.xcodePath) else { return nil}
-            var isStale = false
-            guard let url = try? URL(resolvingBookmarkData: data, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) else { return nil }
-            // guard url?.startAccessingSecurityScopedResource() ?? false else { return nil }
-            return url
+            return userDefaults.secureUrl(forKey: Keys.xcodePath)
         }
         set {
-            let data = try? newValue?.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
-            userDefaults.set(data as Any, forKey: Keys.xcodePath)
+            userDefaults.set(secureUrl: newValue, forKey: Keys.xcodePath)
         }
     }
-
+    
 }
+
+fileprivate extension String {
+    
+    var commandKey: String {
+        return "\(AppSettings.Keys.repos).\(self).\(AppSettings.Keys.repoCommand)"
+    }
+    
+    var checkoutFolderKey: String {
+        return "\(AppSettings.Keys.repos).\(self).\(AppSettings.Keys.repoCheckoutFolder)"
+    }
+    
+}
+
+fileprivate extension UserDefaults {
+    
+    func secureUrl(forKey key: String) -> URL? {
+        guard let data = data(forKey: key) else { return nil}
+        var isStale = false
+        guard let url = try? URL(resolvingBookmarkData: data, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) else { return nil }
+        return isStale ? url : nil
+    }
+    
+    func set(secureUrl url: URL?, forKey key: String) {
+        let data = try? url?.bookmarkData(options: .withSecurityScope, includingResourceValuesForKeys: nil, relativeTo: nil)
+        set(data as Any, forKey: key)
+    }
+    
+}
+

@@ -12,11 +12,11 @@
                 <application id="hnw-xV-0zn" sceneMemberID="viewController">
                     <menu key="mainMenu" title="Main Menu" systemMenu="main" id="AYu-sK-qS6">
                         <items>
-                            <menuItem title="Scratch" id="yyT-qE-f1O" userLabel="PRBuddy">
+                            <menuItem title="PR Buddy" id="yyT-qE-f1O" userLabel="PRBuddy">
                                 <modifierMask key="keyEquivalentModifierMask"/>
-                                <menu key="submenu" title="Scratch" systemMenu="apple" id="TS8-xO-jDp">
+                                <menu key="submenu" title="PR Buddy" systemMenu="apple" id="TS8-xO-jDp">
                                     <items>
-                                        <menuItem title="About Scratch" id="cww-Pz-oji">
+                                        <menuItem title="About PR Buddy" id="cww-Pz-oji">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
                                         <menuItem isSeparatorItem="YES" id="iyU-ja-hfT"/>
@@ -492,7 +492,7 @@ Gw
                 </viewController>
                 <customObject id="MIM-Er-ywS" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="201" y="909"/>
+            <point key="canvasLocation" x="372" y="885"/>
         </scene>
         <!--About View Controller-->
         <scene sceneID="4HN-eC-agY">
@@ -522,6 +522,15 @@ Gw
                                     <action selector="showProjectWithSender:" target="ngs-gE-nrW" id="7fC-f1-bIx"/>
                                 </connections>
                             </button>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lWK-ra-PRz">
+                                <rect key="frame" x="107" y="51" width="131" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="v1.0" id="sqT-pe-C1i">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
                             <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lth-tT-5SD">
                                 <rect key="frame" x="267" y="13" width="63" height="32"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
@@ -533,15 +542,6 @@ Gw
                                     <action selector="dismissController:" target="ngs-gE-nrW" id="yEO-zz-voI"/>
                                 </connections>
                             </button>
-                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lWK-ra-PRz">
-                                <rect key="frame" x="107" y="51" width="131" height="17"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="v1.0" id="sqT-pe-C1i">
-                                    <font key="font" metaFont="system"/>
-                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
-                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
-                                </textFieldCell>
-                            </textField>
                         </subviews>
                     </view>
                     <connections>
@@ -550,7 +550,71 @@ Gw
                 </viewController>
                 <customObject id="0pK-bj-Cwo" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="759" y="827"/>
+            <point key="canvasLocation" x="751" y="895"/>
+        </scene>
+        <!--View Controller-->
+        <scene sceneID="O2O-A0-akS">
+            <objects>
+                <viewController id="Ne1-ob-GC9" sceneMemberID="viewController">
+                    <view key="view" id="L7B-Rm-qm8">
+                        <rect key="frame" x="0.0" y="0.0" width="344" height="300"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="82v-RL-7aW">
+                                <rect key="frame" x="20" y="233" width="304" height="22"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="HPk-JF-uZK">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="FvF-xg-2wp">
+                                <rect key="frame" x="18" y="208" width="263" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Executed in the checkout folder" id="sxc-ss-MHm">
+                                    <font key="font" metaFont="smallSystem"/>
+                                    <color key="textColor" name="windowFrameColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="o06-wU-S2E">
+                                <rect key="frame" x="18" y="263" width="201" height="17"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="left" title="Command to run after checkout:" id="nZk-ws-qRB">
+                                    <font key="font" metaFont="system"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wIq-pC-qh5">
+                                <rect key="frame" x="248" y="13" width="82" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="lnZ-dp-6Wq">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                    <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="dismissController:" target="Ne1-ob-GC9" id="8Uy-8X-qon"/>
+                                </connections>
+                            </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="z0P-2l-0U2">
+                                <rect key="frame" x="166" y="13" width="82" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="push" title="OK!" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="YUB-EL-9zO">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                            </button>
+                        </subviews>
+                    </view>
+                </viewController>
+                <customObject id="sSj-cn-LJv" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1141" y="985"/>
         </scene>
         <!--Settings-->
         <scene sceneID="hIz-AP-VOD">
@@ -944,6 +1008,18 @@ Gw
                                     <action selector="purgeCheckoutFolderWithSender:" target="XfG-lQ-9wD" id="rv6-Kj-8hl"/>
                                 </connections>
                             </button>
+                            <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pGS-jA-Gjw">
+                                <rect key="frame" x="57" y="24" width="19" height="21"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <buttonCell key="cell" type="smallSquare" bezelStyle="smallSquare" image="NSActionTemplate" imagePosition="overlaps" alignment="center" lineBreakMode="truncatingTail" enabled="NO" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="XQa-2L-0ht">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="removeRepoWithSender:" target="XfG-lQ-9wD" id="qMD-Pd-9md"/>
+                                    <segue destination="Ne1-ob-GC9" kind="sheet" id="CCZ-w1-vb1"/>
+                                </connections>
+                            </button>
                         </subviews>
                     </view>
                     <connections>
@@ -954,6 +1030,7 @@ Gw
                         <outlet property="personalAccessTokenField" destination="m6y-wg-cUt" id="k5j-PA-ACa"/>
                         <outlet property="pollingMinutesField" destination="zM1-Fk-rTQ" id="kvz-Fa-cQ7"/>
                         <outlet property="removeRepoButton" destination="kuD-5u-mSO" id="CMM-07-YCL"/>
+                        <outlet property="repoSettingsButton" destination="pGS-jA-Gjw" id="Fp2-q4-ejR"/>
                         <outlet property="reposOutlineView" destination="YtO-Rw-4zj" id="wNQ-gh-nJ0"/>
                         <outlet property="reviewRequestedField" destination="Zc0-n3-x3k" id="stF-6h-at8"/>
                         <outlet property="usernameField" destination="laf-Ab-Hrb" id="oDo-iA-s9b"/>
@@ -970,6 +1047,7 @@ Gw
         </scene>
     </scenes>
     <resources>
+        <image name="NSActionTemplate" width="14" height="14"/>
         <image name="NSAddTemplate" width="11" height="11"/>
         <image name="NSRemoveTemplate" width="11" height="11"/>
     </resources>
