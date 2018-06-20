@@ -71,14 +71,14 @@ class GithubPolling {
     
     var reviewsRequested: [GithubPullRequest] {
         let requests = allPullRequests.filter( {
-            $0.requested_reviewers.contains(where: { $0.login == settings.username }) &&
+            $0.requested_reviewers.contains(where: { $0.login.lowercased() == settings.username?.lowercased() }) &&
             !$0.assignees.contains(where: { $0.login == settings.username })
         } )
         return Array<GithubPullRequest>(requests)
     }
     
     var assigned: [GithubPullRequest] {
-        let requests = allPullRequests.filter( { $0.assignees.contains(where: { $0.login == settings.username }) } )
+        let requests = allPullRequests.filter( { $0.assignees.contains(where: { $0.login.lowercased() == settings.username?.lowercased() }) } )
         return Array<GithubPullRequest>(requests)
     }
 
