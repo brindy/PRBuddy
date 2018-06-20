@@ -149,7 +149,7 @@ class AppSettings {
     // Call #startAccessingSecurityScopedResource before and #stopAccessingSecurityScopedResource after using this URL
     var checkoutDir: URL? {
         get {
-            return userDefaults.url(forKey: Keys.checkoutDir)
+            return userDefaults.secureUrl(forKey: Keys.checkoutDir)
         }
         set {
             userDefaults.set(secureUrl: newValue, forKey: Keys.checkoutDir)
@@ -159,7 +159,9 @@ class AppSettings {
     // Call #startAccessingSecurityScopedResource before and #stopAccessingSecurityScopedResource after using this URL
     var xcodePath: URL? {
         get {
-            return userDefaults.secureUrl(forKey: Keys.xcodePath)
+            let url = userDefaults.secureUrl(forKey: Keys.xcodePath)
+            print(#function, url)
+            return url
         }
         set {
             userDefaults.set(secureUrl: newValue, forKey: Keys.xcodePath)
@@ -186,7 +188,7 @@ fileprivate extension UserDefaults {
         guard let data = data(forKey: key) else { return nil}
         var isStale = false
         guard let url = try? URL(resolvingBookmarkData: data, options: .withSecurityScope, relativeTo: nil, bookmarkDataIsStale: &isStale) else { return nil }
-        return isStale ? url : nil
+        return isStale ? nil : url
     }
     
     func set(secureUrl url: URL?, forKey key: String) {

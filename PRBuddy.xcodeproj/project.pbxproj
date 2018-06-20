@@ -14,6 +14,7 @@
 		854527DE204085F800DFC643 /* GithubPolling.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527DD204085F800DFC643 /* GithubPolling.swift */; };
 		854527E02040862900DFC643 /* AppSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527DF2040862900DFC643 /* AppSettings.swift */; };
 		854527E62040E3B600DFC643 /* AddRepoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854527E52040E3B600DFC643 /* AddRepoViewController.swift */; };
+		859F7034206BD91900A33DA4 /* RepoSettingsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 859F7033206BD91900A33DA4 /* RepoSettingsViewController.swift */; };
 		85B9B90F204720E10086E994 /* AboutViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B9B90E204720E10086E994 /* AboutViewController.swift */; };
 		85B9B91020473B8D0086E994 /* Alamofire.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 854527E2204098F700DFC643 /* Alamofire.framework */; };
 		85B9B912204743180086E994 /* Git.swift in Sources */ = {isa = PBXBuildFile; fileRef = 85B9B911204743180086E994 /* Git.swift */; };
@@ -31,6 +32,7 @@
 		854527DF2040862900DFC643 /* AppSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSettings.swift; sourceTree = "<group>"; };
 		854527E2204098F700DFC643 /* Alamofire.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Alamofire.framework; path = Carthage/Build/Mac/Alamofire.framework; sourceTree = "<group>"; };
 		854527E52040E3B600DFC643 /* AddRepoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddRepoViewController.swift; sourceTree = "<group>"; };
+		859F7033206BD91900A33DA4 /* RepoSettingsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoSettingsViewController.swift; sourceTree = "<group>"; };
 		85B9B90E204720E10086E994 /* AboutViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutViewController.swift; sourceTree = "<group>"; };
 		85B9B911204743180086E994 /* Git.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Git.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -77,6 +79,7 @@
 				854527D6204048CF00DFC643 /* Info.plist */,
 				854527D3204048CF00DFC643 /* Main.storyboard */,
 				854527D7204048CF00DFC643 /* PRBuddy.entitlements */,
+				859F7033206BD91900A33DA4 /* RepoSettingsViewController.swift */,
 				854527CF204048CF00DFC643 /* SettingsViewController.swift */,
 			);
 			path = PRBuddy;
@@ -183,6 +186,7 @@
 			files = (
 				85B9B90F204720E10086E994 /* AboutViewController.swift in Sources */,
 				854527E62040E3B600DFC643 /* AddRepoViewController.swift in Sources */,
+				859F7034206BD91900A33DA4 /* RepoSettingsViewController.swift in Sources */,
 				854527D0204048CF00DFC643 /* SettingsViewController.swift in Sources */,
 				854527DE204085F800DFC643 /* GithubPolling.swift in Sources */,
 				854527E02040862900DFC643 /* AppSettings.swift in Sources */,
