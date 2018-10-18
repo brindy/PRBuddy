@@ -159,9 +159,7 @@ class AppSettings {
     // Call #startAccessingSecurityScopedResource before and #stopAccessingSecurityScopedResource after using this URL
     var xcodePath: URL? {
         get {
-            let url = userDefaults.secureUrl(forKey: Keys.xcodePath)
-            print(#function, url)
-            return url
+            return userDefaults.secureUrl(forKey: Keys.xcodePath)
         }
         set {
             userDefaults.set(secureUrl: newValue, forKey: Keys.xcodePath)

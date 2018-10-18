@@ -141,7 +141,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
                     let projectDir = tmpCheckoutDir.appendingPathComponent(projectName)
                     let projectPath = String(projectDir.absoluteString.dropFirst("file://".count))
 
-                    self.checkoutComplete(projectName, projectPath, progress)
+                    self.checkoutComplete(projectName, projectPath, headBranchName, progress)
                     
                     xcodePath.stopAccessingSecurityScopedResource()
                     checkoutDir.stopAccessingSecurityScopedResource()
@@ -162,14 +162,14 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         controller.showAbout()
     }
     
-    private func checkoutComplete(_ projectName: String, _ projectPath: String, _ progress: Git.Progress) {
+    private func checkoutComplete(_ projectName: String, _ projectPath: String, _ branchName: String, _ progress: Git.Progress) {
         NSPasteboard.general.declareTypes([NSPasteboard.PasteboardType.string], owner: nil)
         _ = NSPasteboard.general.setString(projectPath, forType: NSPasteboard.PasteboardType.fileURL)
         
         let notification = NSUserNotification()
         notification.identifier = UUID().uuidString
-        notification.title = "PRBuddy"
-        notification.subtitle = "Checkout \(projectName) complete"
+        notification.title = "PRBuddy - Checkout complete \(projectName)"
+        notification.subtitle = branchName
 
         if let exitStatus = progress.exitStatus, exitStatus != 0 {
             notification.informativeText = "\(progress.description)\n\n\(projectPath)"
