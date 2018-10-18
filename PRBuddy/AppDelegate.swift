@@ -168,8 +168,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         
         let notification = NSUserNotification()
         notification.identifier = UUID().uuidString
-        notification.title = "PRBuddy - Checkout complete \(projectName)"
-        notification.subtitle = branchName
+        notification.title = "Checkout complete: \(projectName)"
+        notification.subtitle = "Branch: \(branchName)"
 
         if let exitStatus = progress.exitStatus, exitStatus != 0 {
             notification.informativeText = "\(progress.description)\n\n\(projectPath)"
