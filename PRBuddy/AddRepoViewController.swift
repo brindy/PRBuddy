@@ -33,7 +33,7 @@ class AddRepoViewController: NSViewController {
 
 extension AddRepoViewController: NSTextFieldDelegate {
     
-    override func controlTextDidChange(_ obj: Notification) {
+    func controlTextDidChange(_ obj: Notification) {
         addButton.isEnabled = !repoField.stringValue.isEmpty && repoField.stringValue.contains("/")
     }
     

@@ -25,8 +25,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         NotificationCenter.default.addObserver(self, selector: #selector(self.onPollingStarted), name: GithubPolling.Notifications.pollingStarted, object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.onPollingFinished), name: GithubPolling.Notifications.pollingFinished, object: nil)
 
-        let storyboard = NSStoryboard(name: NSStoryboard.Name("Main"), bundle: nil)
-        windowController = storyboard.instantiateController(withIdentifier: NSStoryboard.SceneIdentifier("Main")) as? NSWindowController
+        let storyboard = NSStoryboard(name: "Main", bundle: nil)
+        windowController = storyboard.instantiateController(withIdentifier: "Main") as? NSWindowController
 
         item = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         buildMenu()

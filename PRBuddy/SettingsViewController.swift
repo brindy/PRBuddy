@@ -193,7 +193,7 @@ class SettingsViewController: NSViewController {
     
     func showAbout() {
         dismissAllPresented()
-        performSegue(withIdentifier: NSStoryboardSegue.Identifier("about"), sender: self)
+        performSegue(withIdentifier: "about", sender: self)
     }
     
     private func purge() {
@@ -283,7 +283,7 @@ extension SettingsViewController: NSOutlineViewDataSource {
 
 extension SettingsViewController: NSTextFieldDelegate {
     
-    override func controlTextDidChange(_ obj: Notification) {
+    func controlTextDidChange(_ obj: Notification) {
         
         settings.username = usernameField.stringValue
         settings.noPRs = noPRsField.stringValue
